@@ -1,13 +1,15 @@
-// src/hooks/useWizardForm.ts
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Step1Data, step1Schema, Step2Data, step2Schema, Step3Data, step3Schema } from '../lib/zod';
+import { Step1Data, Step2Data, Step3Data, getStep1Schema, getStep2Schema, getStep3Schema } from '../lib/zod';
+import { useI18n } from './useI18n';
 
 type FormData = Step1Data & Step2Data & Step3Data;
 
 export const useWizardForm = (formData: Partial<FormData>) => {
+  const { t } = useI18n(); 
+
   const step1Form = useForm<Step1Data>({
-    resolver: zodResolver(step1Schema),
+    resolver: zodResolver(getStep1Schema(t)), 
     defaultValues: {
       firstName: formData.firstName || '',
       lastName: formData.lastName || '',
@@ -24,7 +26,7 @@ export const useWizardForm = (formData: Partial<FormData>) => {
   });
 
   const step2Form = useForm<Step2Data>({
-    resolver: zodResolver(step2Schema),
+    resolver: zodResolver(getStep2Schema(t)),
     defaultValues: {
       maritalStatus: formData.maritalStatus || '',
       dependents: formData.dependents || '',
@@ -35,7 +37,7 @@ export const useWizardForm = (formData: Partial<FormData>) => {
   });
 
   const step3Form = useForm<Step3Data>({
-    resolver: zodResolver(step3Schema),
+    resolver: zodResolver(getStep3Schema(t)),
     defaultValues: {
       financialSituation: formData.financialSituation || '',
       helpNeeded: formData.helpNeeded || '',

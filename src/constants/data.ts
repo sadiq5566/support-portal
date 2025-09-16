@@ -1,4 +1,3 @@
-import {  User, Home, FileText } from 'lucide-react';
 
 export interface Country {
   code: string;
@@ -135,28 +134,6 @@ export const genderOptions = [
   { value: 'prefer-not-to-say', label: 'Prefer not to say' }
 ];
 
-export  const formSteps = [
-        {
-            number: 1,
-            title: "Personal Info",
-            subtitle: "Basic details",
-            icon: User,
-        },
-        {
-            number: 2,
-            title: "Family & Financial",
-            subtitle: "Household info",
-            icon: Home,
-        },
-        {
-            number: 3,
-            title: "Situation Description",
-            subtitle: "Your story",
-            icon: FileText,
-        },
-    ];
-
-    // src/lib/options.ts
 export const maritalStatusOptions = [
   { value: 'single', label: 'Single' },
   { value: 'married', label: 'Married' },

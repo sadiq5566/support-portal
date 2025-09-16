@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { useI18n } from '../hooks/useI18n';
 
 type Theme = 'light' | 'dark';
 
@@ -37,8 +38,10 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
 
 export function useTheme() {
   const context = useContext(ThemeContext);
+  const { t } = useI18n();
+
   if (!context) {
-    throw new Error('useTheme must be used within a ThemeProvider');
+    throw new Error(t("errors.useTheme"));
   }
   return context;
 }

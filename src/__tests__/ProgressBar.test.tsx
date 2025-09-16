@@ -1,4 +1,3 @@
-// __tests__/ProgressBar.test.tsx
 import { render } from '@testing-library/react';
 import { ProgressBar } from '../components/steps/ProgressBar';
 

@@ -1,9 +1,7 @@
-// src/components/wizard/WizardNavigation.tsx
-import React from 'react';
 import { motion } from 'motion/react';
 import { ArrowLeft, ArrowRight, Loader2, Save, Send } from 'lucide-react';
-import { Button } from '../ui/button';
-import { useI18n } from '../../contexts/I18nContext';
+import { Button } from '../../ui/button';
+import { useI18n } from '../../../hooks/useI18n';
 
 interface WizardNavigationProps {
     currentStep: number;

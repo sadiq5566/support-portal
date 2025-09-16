@@ -1,21 +1,17 @@
-// Header.tsx
-import React, { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Sun, Moon, Globe, Menu } from 'lucide-react';
-
-import { Button } from './ui/button';
-import { Sheet, SheetContent, SheetTrigger } from './ui/sheet';
+import { Sheet, SheetContent, SheetTrigger } from '../components/ui/sheet';
 import { useTheme } from '../contexts/ThemeContext';
-import { useI18n } from '../contexts/I18nContext';
+import { useI18n } from '../hooks/useI18n';
+import { Button } from '../components/ui/button';
 
 export default function Header() {
   const { theme, toggleTheme } = useTheme();
   const { t, toggleLanguage, isRTL, language } = useI18n();
   const location = useLocation();
   const [isOpen, setIsOpen] = useState(false);
-  const [response, setResponse] = useState('');
-
   const navigation = [
     { name: t('nav.home'), href: '/' },
     { name: t('nav.apply'), href: '/apply' },
@@ -25,37 +21,6 @@ export default function Header() {
     if (href === '/') return location.pathname === '/';
     return location.pathname.startsWith(href);
   };
-
-  const callOpenAI = async () => {
-    try {
-      const res = await fetch('https://api.openai.com/v1/chat/completions', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: 'Bearer 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', // 🔥 INSECURE for production!
-        },
-        body: JSON.stringify({
-          model: 'gpt-5',
-          messages: [
-            {
-              role: 'user',
-              content: 'Write a one-sentence bedtime story about a unicorn.',
-            },
-          ],
-        }),
-      });
-
-      const data = await res.json();
-      setResponse(data.choices?.[0]?.message?.content || 'No response');
-    } catch (error) {
-      console.error('OpenAI Error:', error);
-      setResponse('Error getting response.');
-    }
-  };
-
-  useEffect(() => {
-    // callOpenAI();
-  }, []);
 
   return (
     <motion.header
@@ -75,7 +40,7 @@ export default function Header() {
               <span className="font-bold">S</span>
             </motion.div>
             <span className="hidden font-bold sm:inline-block">
-              Support Portal
+              {t('supportPortal')}
             </span>
           </Link>
 
@@ -104,10 +69,6 @@ export default function Header() {
 
           {/* Actions */}
           <div className="flex items-center space-x-2">
-            {/* Show OpenAI Response */}
-            <span className="text-xs text-muted-foreground hidden md:inline-block max-w-xs truncate">
-              {response}
-            </span>
 
             {/* Theme Toggle */}
             <Button

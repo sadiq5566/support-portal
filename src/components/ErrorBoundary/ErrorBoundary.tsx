@@ -1,4 +1,4 @@
-import React, { Component, ReactNode } from 'react';
+import { Component, ReactNode } from 'react';
 import ErrorPage from '../../pages/ErrorPage';
 
 interface ErrorBoundaryProps {
@@ -18,7 +18,7 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
     }
 
     componentDidCatch(error: Error, info: any) {
-        console.error("Error caught by ErrorBoundary:", error, info);
+        // alert({ error, info })
     }
 
     render() {

@@ -1,3 +1,4 @@
+import { WIZARD_STATUS } from '../../constants/constant';
 import { StepCircle } from './StepCircle';
 import { StepInfo } from './StepInfo';
 
@@ -8,8 +9,8 @@ interface StepItemProps {
         subtitle: string;
         icon: React.ComponentType<{ className?: string }>;
     };
-    key?: number,
-    status: 'completed' | 'active' | 'pending';
+    key?: number;
+    status: typeof WIZARD_STATUS[keyof typeof WIZARD_STATUS];
     canNavigate: boolean;
     onClick: (stepNumber: number) => void;
 }

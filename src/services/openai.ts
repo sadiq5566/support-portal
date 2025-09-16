@@ -1,13 +1,14 @@
 import { openAIInstance } from "../api/openai";
 
-export const getOpenApiMessage = async (input:string): Promise<string> => {
+export const getOpenApiMessage = async (value:string): Promise<string> => {
+  console.log('value',value)
   try {
     const response = await openAIInstance.post('/chat/completions', {
       model: 'gpt-3.5-turbo',
       messages: [
         {
           role: 'user',
-          content: input,
+          content:value ,
         },
       ],
     });

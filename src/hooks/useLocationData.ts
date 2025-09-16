@@ -1,6 +1,5 @@
-// src/hooks/useLocationData.ts
-import { useState, useEffect } from 'react';
-import { Country, State, locationData } from '../data/data';
+import { useState } from 'react';
+import { Country, State, locationData } from '../constants/data';
 
 export const useLocationData = () => {
   const [selectedCountry, setSelectedCountry] = useState<Country | null>(null);

@@ -1,14 +1,13 @@
-// src/components/wizard/steps/PersonalInfoStep.tsx
-import React from 'react';
 import { motion } from 'motion/react';
-import { UseFormReturn } from 'react-hook-form';
+import { ControllerRenderProps, UseFormReturn } from 'react-hook-form';
 import { Card, CardContent, CardHeader, CardTitle } from '../../ui/card';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '../../ui/form';
 import { Input } from '../../ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../ui/select';
-import { useI18n } from '../../../contexts/I18nContext';
+import { useI18n } from '../../../hooks/useI18n';
 import { Step1Data } from '../../../lib/zod';
-import { genderOptions, locationData, Country, State } from '../../../data/data';
+import { genderOptions, locationData, Country, State } from '../../../constants/data';
+import { FORM_FIELDS } from '../../../constants/constant';
 
 interface PersonalInfoStepProps {
     form: UseFormReturn<Step1Data>;
@@ -46,29 +45,30 @@ export default function PersonalInfoStep({
                 <CardContent>
                     <Form {...form}>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            {/* Name Fields */}
+                            {/* First Name */}
                             <FormField
                                 control={form.control}
-                                name="firstName"
-                                render={({ field }) => (
+                                name={FORM_FIELDS.FIRST_NAME}
+                                render={({ field }: { field: ControllerRenderProps<Step1Data> }) => (
                                     <FormItem>
                                         <FormLabel>{t('form.first_name')}</FormLabel>
                                         <FormControl>
-                                            <Input placeholder="John" {...field} />
+                                            <Input placeholder={t("placeholder.firstName")} {...field} />
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>
                                 )}
                             />
 
+                            {/* Last Name */}
                             <FormField
                                 control={form.control}
-                                name="lastName"
-                                render={({ field }) => (
+                                name={FORM_FIELDS.LAST_NAME}
+                                render={({ field }: { field: ControllerRenderProps<Step1Data> }) => (
                                     <FormItem>
                                         <FormLabel>{t('form.last_name')}</FormLabel>
                                         <FormControl>
-                                            <Input placeholder="Doe" {...field} />
+                                            <Input placeholder={t("placeholder.lastName")} {...field} />
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>
@@ -78,12 +78,12 @@ export default function PersonalInfoStep({
                             {/* Phone */}
                             <FormField
                                 control={form.control}
-                                name="phone"
-                                render={({ field }) => (
+                                name={FORM_FIELDS.PHONE}
+                                render={({ field }: { field: ControllerRenderProps<Step1Data> }) => (
                                     <FormItem>
                                         <FormLabel>{t('form.phone')}</FormLabel>
                                         <FormControl>
-                                            <Input type="tel" placeholder="+1 (555) 123-4567" {...field} />
+                                            <Input type="tel" placeholder={t("placeholder.phone")} {...field} />
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>
@@ -93,12 +93,12 @@ export default function PersonalInfoStep({
                             {/* Email */}
                             <FormField
                                 control={form.control}
-                                name="email"
-                                render={({ field }) => (
+                                name={FORM_FIELDS.EMAIL}
+                                render={({ field }: { field: ControllerRenderProps<Step1Data> }) => (
                                     <FormItem>
                                         <FormLabel>{t('form.email')}</FormLabel>
                                         <FormControl>
-                                            <Input type="email" placeholder="john@example.com" {...field} />
+                                            <Input type="email" placeholder={t("placeholder.email")} {...field} />
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>
@@ -108,14 +108,14 @@ export default function PersonalInfoStep({
                             {/* Gender */}
                             <FormField
                                 control={form.control}
-                                name="gender"
-                                render={({ field }) => (
+                                name={FORM_FIELDS.GENDER}
+                                render={({ field }: { field: ControllerRenderProps<Step1Data> }) => (
                                     <FormItem>
                                         <FormLabel>{t('form.gender')}</FormLabel>
                                         <Select onValueChange={field.onChange} value={field.value}>
                                             <FormControl>
                                                 <SelectTrigger>
-                                                    <SelectValue placeholder={t('form.select_gender')} />
+                                                    <SelectValue placeholder={t('placeholder.selectGender')} />
                                                 </SelectTrigger>
                                             </FormControl>
                                             <SelectContent>
@@ -134,12 +134,14 @@ export default function PersonalInfoStep({
                             {/* Date of Birth */}
                             <FormField
                                 control={form.control}
-                                name="dateOfBirth"
-                                render={({ field }) => (
+                                name={FORM_FIELDS.DATE_OF_BIRTH}
+                                render={({ field }: { field: ControllerRenderProps<Step1Data> }) => (
                                     <FormItem>
                                         <FormLabel>{t('form.date_of_birth')}</FormLabel>
                                         <FormControl>
-                                            <Input type="date" {...field} />
+                                            <Input type="date" {...field}
+                                                max={new Date().toISOString().split("T")[0]}
+                                            />
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>
@@ -149,12 +151,12 @@ export default function PersonalInfoStep({
                             {/* National ID */}
                             <FormField
                                 control={form.control}
-                                name="nationalId"
-                                render={({ field }) => (
+                                name={FORM_FIELDS.NATIONAL_ID}
+                                render={({ field }: { field: ControllerRenderProps<Step1Data> }) => (
                                     <FormItem>
                                         <FormLabel>{t('form.national_id')}</FormLabel>
                                         <FormControl>
-                                            <Input placeholder="123456789" {...field} />
+                                            <Input placeholder={t("placeholder.nationalId")} {...field} />
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>
@@ -164,17 +166,14 @@ export default function PersonalInfoStep({
                             {/* Country */}
                             <FormField
                                 control={form.control}
-                                name="country"
-                                render={({ field }) => (
+                                name={FORM_FIELDS.COUNTRY}
+                                render={({ field }: { field: ControllerRenderProps<Step1Data> }) => (
                                     <FormItem>
                                         <FormLabel>{t('form.country')}</FormLabel>
-                                        <Select
-                                            onValueChange={handleCountryChange}
-                                            value={field.value}
-                                        >
+                                        <Select onValueChange={handleCountryChange} value={field.value}>
                                             <FormControl>
                                                 <SelectTrigger>
-                                                    <SelectValue placeholder={t('form.select_country')} />
+                                                    <SelectValue placeholder={t("placeholder.selectCountry")} />
                                                 </SelectTrigger>
                                             </FormControl>
                                             <SelectContent>
@@ -193,8 +192,8 @@ export default function PersonalInfoStep({
                             {/* State */}
                             <FormField
                                 control={form.control}
-                                name="state"
-                                render={({ field }) => (
+                                name={FORM_FIELDS.STATE}
+                                render={({ field }: { field: ControllerRenderProps<Step1Data> }) => (
                                     <FormItem>
                                         <FormLabel>{t('form.state')}</FormLabel>
                                         <Select
@@ -229,8 +228,8 @@ export default function PersonalInfoStep({
                             {/* City */}
                             <FormField
                                 control={form.control}
-                                name="city"
-                                render={({ field }) => (
+                                name={FORM_FIELDS.CITY}
+                                render={({ field }: { field: ControllerRenderProps<Step1Data> }) => (
                                     <FormItem>
                                         <FormLabel>{t('form.city')}</FormLabel>
                                         <Select
@@ -265,12 +264,12 @@ export default function PersonalInfoStep({
                             {/* Address */}
                             <FormField
                                 control={form.control}
-                                name="address"
-                                render={({ field }) => (
+                                name={FORM_FIELDS.ADDRESS}
+                                render={({ field }: { field: ControllerRenderProps<Step1Data> }) => (
                                     <FormItem className="md:col-span-2">
                                         <FormLabel>{t('form.address')}</FormLabel>
                                         <FormControl>
-                                            <Input placeholder="123 Main Street" {...field} />
+                                            <Input placeholder={t("placeholder.address")} {...field} />
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>

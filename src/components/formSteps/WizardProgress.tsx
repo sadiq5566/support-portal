@@ -1,9 +1,6 @@
-// src/components/wizard/WizardProgress.tsx
-import React from 'react';
 import { motion } from 'motion/react';
-import { useI18n } from '../../contexts/I18nContext';
-import StepProgress from '../StepProgress';
-
+import { useI18n } from '../../hooks/useI18n';
+import StepProgress from "../formSteps/StepProgress"
 interface WizardProgressProps {
     currentStep: number;
     totalSteps: number;
@@ -27,7 +24,7 @@ export default function WizardProgress({
             className="mb-8"
         >
             <div className="text-center mb-6">
-                <h1 className="text-3xl font-bold mb-2">Support Application</h1>
+                <h1 className="text-3xl font-bold mb-2">{t('wizard.support_application')}</h1>
                 <p className="text-muted-foreground">
                     {t('wizard.progress', { current: currentStep, total: totalSteps })}
                 </p>

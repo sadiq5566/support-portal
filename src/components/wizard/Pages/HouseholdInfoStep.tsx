@@ -1,13 +1,12 @@
-// src/components/wizard/steps/HouseholdInfoStep.tsx
-import React from 'react';
 import { motion } from 'motion/react';
-import { UseFormReturn } from 'react-hook-form';
+import { ControllerRenderProps, UseFormReturn } from 'react-hook-form';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../ui/card';
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '../../ui/form';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../ui/select';
-import { useI18n } from '../../../contexts/I18nContext';
+import { useI18n } from '../../../hooks/useI18n';
 import { Step2Data } from '../../../lib/zod';
-import { dependentsOptions, employmentStatusOptions, housingStatusOptions, maritalStatusOptions, monthlyIncomeOptions } from '../../../data/data';
+import { dependentsOptions, employmentStatusOptions, housingStatusOptions, maritalStatusOptions, monthlyIncomeOptions } from '../../../constants/data';
+import { FORM_FIELDS } from '../../../constants/constant';
 
 interface HouseholdInfoStepProps {
     form: UseFormReturn<Step2Data>;
@@ -28,7 +27,7 @@ export default function HouseholdInfoStep({ form }: HouseholdInfoStepProps) {
                 <CardHeader>
                     <CardTitle>{t('wizard.step2.title')}</CardTitle>
                     <CardDescription>
-                        Please provide your household and employment information
+                        {t("wizard.step2.employment_information")}
                     </CardDescription>
                 </CardHeader>
                 <CardContent>
@@ -37,14 +36,14 @@ export default function HouseholdInfoStep({ form }: HouseholdInfoStepProps) {
                             {/* Marital Status */}
                             <FormField
                                 control={form.control}
-                                name="maritalStatus"
-                                render={({ field }) => (
+                                name={FORM_FIELDS.MARITAL_STATUS}
+                                render={({ field }: { field: ControllerRenderProps<Step2Data> }) => (
                                     <FormItem>
                                         <FormLabel>{t('form.marital_status')}</FormLabel>
-                                        <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                        <Select onValueChange={field.onChange} value={field.value}>
                                             <FormControl>
                                                 <SelectTrigger>
-                                                    <SelectValue placeholder="Select marital status" />
+                                                    <SelectValue placeholder={t("placeholder.selectMaritalStatus")} />
                                                 </SelectTrigger>
                                             </FormControl>
                                             <SelectContent>
@@ -63,17 +62,17 @@ export default function HouseholdInfoStep({ form }: HouseholdInfoStepProps) {
                             {/* Dependents */}
                             <FormField
                                 control={form.control}
-                                name="dependents"
-                                render={({ field }) => (
+                                name={FORM_FIELDS.DEPENDENTS}
+                                render={({ field }: { field: ControllerRenderProps<Step2Data> }) => (
                                     <FormItem>
                                         <FormLabel>{t('form.dependents')}</FormLabel>
                                         <FormDescription>
-                                            Number of people who depend on you financially
+                                            {t("wizard.step2.dependents_description")}
                                         </FormDescription>
-                                        <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                        <Select onValueChange={field.onChange} value={field.value}>
                                             <FormControl>
                                                 <SelectTrigger>
-                                                    <SelectValue placeholder="Select number of dependents" />
+                                                    <SelectValue placeholder={t("placeholder.selectDependents")} />
                                                 </SelectTrigger>
                                             </FormControl>
                                             <SelectContent>
@@ -92,14 +91,14 @@ export default function HouseholdInfoStep({ form }: HouseholdInfoStepProps) {
                             {/* Employment Status */}
                             <FormField
                                 control={form.control}
-                                name="employmentStatus"
-                                render={({ field }) => (
+                                name={FORM_FIELDS.EMPLOYMENT_STATUS}
+                                render={({ field }: { field: ControllerRenderProps<Step2Data> }) => (
                                     <FormItem>
                                         <FormLabel>{t('form.employment_status')}</FormLabel>
-                                        <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                        <Select onValueChange={field.onChange} value={field.value}>
                                             <FormControl>
                                                 <SelectTrigger>
-                                                    <SelectValue placeholder="Select employment status" />
+                                                    <SelectValue placeholder={t("placeholder.selectEmploymentStatus")} />
                                                 </SelectTrigger>
                                             </FormControl>
                                             <SelectContent>
@@ -118,17 +117,17 @@ export default function HouseholdInfoStep({ form }: HouseholdInfoStepProps) {
                             {/* Monthly Income */}
                             <FormField
                                 control={form.control}
-                                name="monthlyIncome"
-                                render={({ field }) => (
+                                name={FORM_FIELDS.MONTHLY_INCOME}
+                                render={({ field }: { field: ControllerRenderProps<Step2Data> }) => (
                                     <FormItem>
                                         <FormLabel>{t('form.monthly_income')}</FormLabel>
                                         <FormDescription>
-                                            Total gross monthly household income before taxes
+                                            {t("wizard.step2.monthly_income_description")}
                                         </FormDescription>
-                                        <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                        <Select onValueChange={field.onChange} value={field.value}>
                                             <FormControl>
                                                 <SelectTrigger>
-                                                    <SelectValue placeholder="Select monthly income range" />
+                                                    <SelectValue placeholder={t("placeholder.selectMonthlyIncome")} />
                                                 </SelectTrigger>
                                             </FormControl>
                                             <SelectContent>
@@ -147,17 +146,17 @@ export default function HouseholdInfoStep({ form }: HouseholdInfoStepProps) {
                             {/* Housing Status */}
                             <FormField
                                 control={form.control}
-                                name="housingStatus"
-                                render={({ field }) => (
+                                name={FORM_FIELDS.HOUSING_STATUS}
+                                render={({ field }: { field: ControllerRenderProps<Step2Data> }) => (
                                     <FormItem>
                                         <FormLabel>{t('form.housing_status')}</FormLabel>
                                         <FormDescription>
-                                            Your current living situation
+                                            {t("wizard.step2.housing_status_description")}
                                         </FormDescription>
-                                        <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                        <Select onValueChange={field.onChange} value={field.value}>
                                             <FormControl>
                                                 <SelectTrigger>
-                                                    <SelectValue placeholder="Select housing status" />
+                                                    <SelectValue placeholder={t("placeholder.selectHousingStatus")} />
                                                 </SelectTrigger>
                                             </FormControl>
                                             <SelectContent>

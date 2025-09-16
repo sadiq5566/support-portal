@@ -1,4 +1,4 @@
-import { ConnectionLine } from './ConnectionLine';
+import { WIZARD_STATUS } from '../../constants/constant';
 import { StepItem } from './StepItem';
 
 interface StepIndicatorsProps {
@@ -8,15 +8,13 @@ interface StepIndicatorsProps {
         subtitle: string;
         icon: React.ComponentType<{ className?: string }>;
     }>;
-    currentStep: number;
-    getStepStatus: (stepNumber: number) => 'completed' | 'active' | 'pending';
+    getStepStatus: (stepNumber: number) => typeof WIZARD_STATUS[keyof typeof WIZARD_STATUS];
     canNavigateToStep: (stepNumber: number) => boolean;
     onStepClick: (stepNumber: number) => void;
 }
 
 export const StepIndicators = ({
     steps,
-    currentStep,
     getStepStatus,
     canNavigateToStep,
     onStepClick
@@ -31,7 +29,7 @@ export const StepIndicators = ({
                     <StepItem
                         key={step.number}
                         step={step}
-                        status={status}
+                        status={status} // now typed from WIZARD_STATUS
                         canNavigate={canNavigate}
                         onClick={onStepClick}
                     />

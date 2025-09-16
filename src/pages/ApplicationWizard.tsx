@@ -1,228 +1,197 @@
-// src/components/wizard/ApplicationWizard.tsx - Updated to use Layout
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { AnimatePresence } from 'motion/react';
-import { toast } from 'sonner@2.0.3';
-import { useI18n } from '../contexts/I18nContext';
+import { toast } from 'sonner';
+import { useI18n } from '../hooks/useI18n';
 import { useLocalStorage } from '../hooks/useLocalStorage';
 import { useLocationData } from '../hooks/useLocationData';
 import { useWizardForm } from '../hooks/useWizardForm';
-import WizardProgress from '../components/wizard/WizardProgress';
-import PersonalInfoStep from '../components/wizard/steps/PersonalInfoStep';
-import HouseholdInfoStep from '../components/wizard/steps/HouseholdInfoStep';
-import SituationStep from '../components/wizard/steps/SituationStep';
-import WizardNavigation from '../components/wizard/WizardNavigation';
-import AIAssistant from '../components/AIAssistant';
+import WizardProgress from '../components/formSteps/WizardProgress';
+import PersonalInfoStep from '../components/wizard/Pages/PersonalInfoStep';
+import HouseholdInfoStep from '../components/wizard/Pages/HouseholdInfoStep';
+import SituationStep from '../components/wizard/Pages/SituationStep';
+import WizardNavigation from '../components/wizard/components/WizardNavigation';
 import { Step1Data, Step2Data, Step3Data } from '../lib/zod';
-import { useWizardKeyboard } from '../hooks/useWizardKeyboard';
+import {
+  AI_ASSISTANT_DEFAULTS,
+  FORM_FIELDS,
+  LOCAL_STEP_KEY,
+  MOCK_API_CONFIG,
+  STORAGE_KEY,
+  TOAST_MESSAGES,
+  TOTAL_STEPS,
+  WIZARD_STEPS
+} from '../constants/constant';
+import AIAssistant from '../components/wizard/components/AIAssistant';
 
 type FormData = Step1Data & Step2Data & Step3Data;
 
-const STORAGE_KEY = 'application-wizard-data';
-
 export default function ApplicationWizard() {
   const { t } = useI18n();
-  const [currentStep, setCurrentStep] = useState(1);
+  const [currentStep, setCurrentStep] = useState<number>(WIZARD_STEPS.PERSONAL_INFO);
   const [formData, setFormData] = useLocalStorage<Partial<FormData>>(STORAGE_KEY, {});
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [aiAssistant, setAiAssistant] = useState<{
-    isOpen: boolean;
-    fieldName: string;
-    fieldLabel: string;
-  }>({
-    isOpen: false,
-    fieldName: '',
-    fieldLabel: '',
-  });
+  const [aiAssistant, setAiAssistant] = useState(AI_ASSISTANT_DEFAULTS);
+  const [error, setError] = useState<Error | null>(null);
 
   const locationData = useLocationData();
   const { step1Form, step2Form, step3Form, getCurrentForm } = useWizardForm(formData);
-  const [error, setError] = useState<Error | null>(null);
 
-  const totalSteps = 3;
-  const progress = (currentStep / totalSteps) * 100;
+  const progress = (currentStep / TOTAL_STEPS) * 100;
 
-  // Load saved step on mount
+  // Load saved step
   useEffect(() => {
-    const savedStep = localStorage.getItem('currentStep');
-    if (savedStep) {
-      setCurrentStep(Number(savedStep));
-    }
+    const savedStep = localStorage.getItem(LOCAL_STEP_KEY);
+    if (savedStep) setCurrentStep(Number(savedStep));
   }, []);
 
-  // Initialize location data from saved form data
+  // Initialize location data
   useEffect(() => {
     if (formData.country) {
       locationData.initializeFromData(formData.country, formData.state);
     }
   }, [formData.country, formData.state]);
 
+  // Auto-save on form change
+  useEffect(() => {
+    const currentForm = getCurrentForm(currentStep);
+
+    currentForm.watch((values) => {
+      setFormData(prev => ({ ...prev, ...values }));
+    });
+  }, [currentStep, setFormData]);
+
+  // Helper functions for AI Assistant
+  const getCurrentFieldValue = (): string => {
+    switch (currentStep) {
+      case WIZARD_STEPS.PERSONAL_INFO:
+        return step1Form.getValues()[aiAssistant.fieldName as keyof Step1Data] || aiAssistant.customQuestion;
+      case WIZARD_STEPS.HOUSEHOLD_INFO:
+        return step2Form.getValues()[aiAssistant.fieldName as keyof Step2Data] || aiAssistant.customQuestion;
+      case WIZARD_STEPS.SITUATION:
+        return step3Form.getValues()[aiAssistant.fieldName as keyof Step3Data] || aiAssistant.customQuestion;
+      default:
+        return '';
+    }
+  };
+
+  const setCurrentFieldValue = (value: string) => {
+    switch (currentStep) {
+      case WIZARD_STEPS.PERSONAL_INFO:
+        step1Form.setValue(aiAssistant.fieldName as keyof Step1Data, value);
+        break;
+      case WIZARD_STEPS.HOUSEHOLD_INFO:
+        step2Form.setValue(aiAssistant.fieldName as keyof Step2Data, value);
+        break;
+      case WIZARD_STEPS.SITUATION:
+        step3Form.setValue(aiAssistant.fieldName as keyof Step3Data, value);
+        break;
+    }
+  };
+
   const saveProgress = () => {
     const currentForm = getCurrentForm(currentStep);
-    const currentData = currentForm.getValues();
-    const updatedData = { ...formData, ...currentData };
-    setFormData(updatedData);
-    toast.success('Progress saved');
+    setFormData({ ...formData, ...currentForm.getValues() });
+    toast.success(t(TOAST_MESSAGES.progressSaved));
   };
 
   const handleNext = async () => {
     const currentForm = getCurrentForm(currentStep);
     const isValid = await currentForm.trigger();
+    if (!isValid) return;
 
-    if (isValid) {
-      const currentData = currentForm.getValues();
-      const updatedData = { ...formData, ...currentData };
-      setFormData(updatedData);
+    setFormData({ ...formData, ...currentForm.getValues() });
 
-      if (currentStep < totalSteps) {
-        setCurrentStep(currentStep + 1);
-        localStorage.setItem('currentStep', String(currentStep + 1));
-      }
+    if (currentStep < TOTAL_STEPS) {
+      const nextStep = currentStep + 1;
+      setCurrentStep(nextStep);
+      localStorage.setItem(LOCAL_STEP_KEY, String(nextStep));
     }
   };
 
   const handleBack = () => {
-    if (currentStep > 1) {
-      setCurrentStep(currentStep - 1);
-    }
+    if (currentStep > 1) setCurrentStep(currentStep - 1);
   };
 
   const handleStepClick = (step: number) => {
-    if (step <= currentStep) {
-      setCurrentStep(step);
-    }
+    if (step <= currentStep) setCurrentStep(step);
   };
 
   const handleSubmit = async () => {
-    const step3Data = step3Form.getValues();
-    const finalData = { ...formData, ...step3Data };
-
     const isStep3Valid = await step3Form.trigger();
     if (!isStep3Valid) return;
 
     setIsSubmitting(true);
-    const loadingToastId = toast.loading('Submitting application...');
+    const loadingToastId = toast.loading(t(TOAST_MESSAGES.submitting));
 
     try {
-      // Mock API call
       const mockApiCall = () =>
         new Promise<{ success: boolean }>((resolve, reject) => {
           setTimeout(() => {
-            // Simulate API error
-            const shouldFail = false;
-            if (shouldFail) reject(new Error('API error occurred'));
+            if (MOCK_API_CONFIG.shouldFail) reject(new Error(t(TOAST_MESSAGES.apiError)));
             else resolve({ success: true });
-          }, 2000);
+          }, MOCK_API_CONFIG.delay);
         });
 
       const response = await mockApiCall();
-
-      // Only runs if API succeeds
       if (response.success) {
-        toast.success('Application submitted successfully!', { id: loadingToastId });
+        toast.success(t(TOAST_MESSAGES.submitSuccess), { id: loadingToastId });
         setFormData({});
-        localStorage.removeItem('currentStep');
+        localStorage.removeItem(LOCAL_STEP_KEY);
         window.location.href = '/';
       }
-    } catch (error) {
-      console.error('API error:', error);
-      toast.error('Failed to submit application. Please try again.', { id: loadingToastId });
-      setError(error); // <--- triggers ErrorBoundary via render
+    } catch (error: any) {
+      toast.error(t(TOAST_MESSAGES.submitError), { id: loadingToastId });
+      setError(error);
     } finally {
-      setIsSubmitting(false); // always reset submitting
+      setIsSubmitting(false);
     }
   };
 
-  if (error) throw error;
-
-  const openAIAssistant = (fieldName: string, fieldLabel: string) => {
-    setAiAssistant({
-      isOpen: true,
-      fieldName,
-      fieldLabel,
-    });
+  const openAIAssistant = (fieldName: string, fieldValue: string, fieldLabel: string, customQuestion: string) => {
+    console.log('customQuestion is', customQuestion)
+    setAiAssistant({ isOpen: true, fieldName, fieldValue, fieldLabel, customQuestion });
   };
 
   const handleAIAccept = (suggestion: string) => {
-    const currentForm = getCurrentForm(currentStep);
-    currentForm.setValue(aiAssistant.fieldName as any, suggestion);
+    setCurrentFieldValue(suggestion);
   };
 
-  // Auto-save on form changes
-  useEffect(() => {
-    const subscription = getCurrentForm(currentStep).watch(() => {
-      const currentData = getCurrentForm(currentStep).getValues();
-      const updatedData = { ...formData, ...currentData };
-      setFormData(updatedData);
-    });
-
-    return () => subscription.unsubscribe();
-  }, [currentStep, formData, setFormData]);
-
-  const commonStepProps = {
-    formData,
-  };
-
+  const commonStepProps = { formData };
   const locationProps = {
     ...locationData,
     handleCountryChange: (countryCode: string) => {
       locationData.handleCountryChange(countryCode);
-      step1Form.setValue('country', countryCode);
-      step1Form.setValue('state', '');
-      step1Form.setValue('city', '');
+      step1Form.setValue(FORM_FIELDS.COUNTRY, countryCode);
+      step1Form.setValue(FORM_FIELDS.STATE, '');
+      step1Form.setValue(FORM_FIELDS.CITY, '');
     },
     handleStateChange: (stateCode: string) => {
       locationData.handleStateChange(stateCode);
-      step1Form.setValue('state', stateCode);
-      step1Form.setValue('city', '');
+      step1Form.setValue(FORM_FIELDS.STATE, stateCode);
+      step1Form.setValue(FORM_FIELDS.CITY, '');
     },
   };
-  // useWizardKeyboard({
-  //   currentStep,
-  //   totalSteps: 3,
-  //   isSubmitting,
-  //   handleNext,
-  //   handleBack,
-  //   handleSubmit
-  // });
 
+  if (error) throw error;
 
   return (
     <>
       <div className="container mx-auto px-4 py-8 sm:px-6 lg:px-8 max-w-4xl">
-        <WizardProgress
-          currentStep={currentStep}
-          totalSteps={totalSteps}
-          progress={progress}
-          onStepClick={handleStepClick}
-        />
+        <WizardProgress currentStep={currentStep} totalSteps={TOTAL_STEPS} progress={progress} onStepClick={handleStepClick} />
 
         <AnimatePresence mode="wait">
-          {currentStep === 1 && (
-            <PersonalInfoStep
-              form={step1Form}
-              {...commonStepProps}
-              {...locationProps}
-
-            />
+          {currentStep === WIZARD_STEPS.PERSONAL_INFO && (
+            <PersonalInfoStep form={step1Form} {...commonStepProps} {...locationProps} />
           )}
-          {currentStep === 2 && (
-            <HouseholdInfoStep
-              form={step2Form}
-              {...commonStepProps}
-            />
-          )}
-          {currentStep === 3 && (
-            <SituationStep
-              form={step3Form}
-              {...commonStepProps}
-              openAIAssistant={openAIAssistant}
-            />
+          {currentStep === WIZARD_STEPS.HOUSEHOLD_INFO && <HouseholdInfoStep form={step2Form} {...commonStepProps} />}
+          {currentStep === WIZARD_STEPS.SITUATION && (
+            <SituationStep form={step3Form} {...commonStepProps} openAIAssistant={openAIAssistant} />
           )}
         </AnimatePresence>
 
         <WizardNavigation
           currentStep={currentStep}
-          totalSteps={totalSteps}
+          totalSteps={TOTAL_STEPS}
           isSubmitting={isSubmitting}
           onBack={handleBack}
           onNext={handleNext}
@@ -233,8 +202,9 @@ export default function ApplicationWizard() {
 
       <AIAssistant
         fieldName={aiAssistant.fieldName}
+        fieldValue={aiAssistant.fieldValue}
         fieldLabel={aiAssistant.fieldLabel}
-        currentValue={getCurrentForm(currentStep).getValues()[aiAssistant.fieldName as keyof any] || ''}
+        currentValue={getCurrentFieldValue()}
         onAccept={handleAIAccept}
         isOpen={aiAssistant.isOpen}
         onOpenChange={(open) => setAiAssistant(prev => ({ ...prev, isOpen: open }))}

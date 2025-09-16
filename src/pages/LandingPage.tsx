@@ -1,11 +1,10 @@
-import React from 'react';
 import { Link } from 'react-router-dom';
 import { motion, useReducedMotion } from 'motion/react';
 import { ArrowRight, CheckCircle, Sparkles, Shield, ChevronDown } from 'lucide-react';
 import { Button } from '../components/ui/button';
 import { Card, CardContent } from '../components/ui/card';
 import { ImageWithFallback } from '../components/fallback/ImageWithFallback';
-import { useI18n } from '../contexts/I18nContext';
+import { useI18n } from '../hooks/useI18n';
 
 export default function LandingPage() {
   const { t } = useI18n();
@@ -45,7 +44,7 @@ export default function LandingPage() {
       {/* Hero Section */}
       <section
         role="banner"
-        aria-label={t('hero.title')}
+        aria-label={t('landing.features_heading')}
         className="relative overflow-hidden bg-gradient-to-br from-background via-background to-accent/20"
       >
         <div className="container mx-auto px-4 py-20 sm:px-6 lg:px-8">
@@ -63,7 +62,7 @@ export default function LandingPage() {
                 transition={{ delay: 0.2, duration: 0.8 }}
                 className="text-4xl font-bold tracking-tight sm:text-5xl lg:text-6xl"
               >
-                {t('hero.title')}
+                {t('landing.features_heading')}
               </motion.h1>
 
               <motion.p
@@ -72,7 +71,7 @@ export default function LandingPage() {
                 transition={{ delay: 0.4, duration: 0.8 }}
                 className="mt-6 text-lg text-muted-foreground sm:text-xl"
               >
-                {t('hero.subtitle')}
+                {t('landing.features_subheading')}
               </motion.p>
 
               <motion.div
@@ -127,11 +126,11 @@ export default function LandingPage() {
                 transition={{ delay: 1, duration: 0.6 }}
                 className="absolute -top-4 -right-4 bg-white dark:bg-card p-4 rounded-lg shadow-lg border"
                 role="status"
-                aria-label="Application approved"
+                aria-label={t('landing.application_approved')}
               >
                 <div className="flex items-center space-x-2">
                   <CheckCircle className="h-5 w-5 text-green-500" aria-hidden="true" />
-                  <span className="text-sm font-medium">Application Approved</span>
+                  <span className="text-sm font-medium">{t('landing.application_approved')}</span>
                 </div>
               </motion.div>
 
@@ -141,11 +140,11 @@ export default function LandingPage() {
                 transition={{ delay: 1.2, duration: 0.6 }}
                 className="absolute -bottom-4 -left-4 bg-white dark:bg-card p-4 rounded-lg shadow-lg border"
                 role="status"
-                aria-label="AI assistant active"
+                aria-label={t('landing.ai_assistant_active')}
               >
                 <div className="flex items-center space-x-2">
                   <Sparkles className="h-5 w-5 text-blue-500" aria-hidden="true" />
-                  <span className="text-sm font-medium">AI Assistant Active</span>
+                  <span className="text-sm font-medium">{t('landing.ai_assistant_active')}</span>
                 </div>
               </motion.div>
             </motion.div>
@@ -169,10 +168,10 @@ export default function LandingPage() {
             className="text-center mb-16"
           >
             <h2 id="features-heading" className="text-3xl font-bold sm:text-4xl">
-              How We Help You
+              {t('landing.features_heading')}
             </h2>
             <p className="mt-4 text-lg text-muted-foreground">
-              Our platform makes applying for financial support simple and accessible
+              {t('landing.features_subheading')}
             </p>
           </motion.div>
 
@@ -225,10 +224,11 @@ export default function LandingPage() {
             viewport={{ once: true }}
             className="text-center"
           >
-            <h2 className="text-3xl font-bold sm:text-4xl mb-4">Ready to Get Started?</h2>
+            <h2 className="text-3xl font-bold sm:text-4xl mb-4">
+              {t('landing.cta_title')}
+            </h2>
             <p className="text-lg text-primary-foreground/80 mb-8 max-w-2xl mx-auto">
-              Begin your application today and get the support you need. Our process is
-              designed to be quick, easy, and secure.
+              {t('landing.cta_description')}
             </p>
 
             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>

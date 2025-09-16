@@ -1,4 +1,3 @@
-// src/hooks/useWizardKeyboard.ts
 import { useEffect } from 'react';
 interface UseWizardKeyboardProps {
     currentStep: number;

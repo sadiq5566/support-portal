@@ -2,6 +2,7 @@
   import { defineConfig } from 'vite';
   import react from '@vitejs/plugin-react-swc';
   import path from 'path';
+import type { UserConfig as VitestConfig } from 'vitest/config'; 
 
   export default defineConfig({
     plugins: [react()],
@@ -9,7 +10,7 @@
     globals: true,
     environment: 'jsdom',
     setupFiles: './src/setupTests.ts',
-  },
+  } as VitestConfig['test'],
     resolve: {
       extensions: ['.js', '.jsx', '.ts', '.tsx', '.json'],
       alias: {
