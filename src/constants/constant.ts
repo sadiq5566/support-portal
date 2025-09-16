@@ -9,7 +9,7 @@ export const TOAST_MESSAGES = {
   submitSuccess: 'toast.submitSuccess',
   submitError: 'toast.submitError',
   apiError: 'toast.apiError',
-  suggestionAccepted: 'Suggestion accepted',
+  suggestionAccepted: 'suggestion.accepted',
 
 };
 export const FORM_FIELDS = {

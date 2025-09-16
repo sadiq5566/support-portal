@@ -41,24 +41,29 @@ export function I18nProvider({ children }: { children: React.ReactNode }) {
   };
 
   const value = useMemo<I18nContextType>(() => {
+    const t: I18nContextType['t'] = (key, params) => {
+      // Get the map for the current language
+      const translationMap = translations[language] as Record<string, any>;
 
-    const t: TFunction = (
-      key,
-      params
-    ) => {
-      const translationMap = translations[language] as Record<string, string>;
+      // Support nested keys like "landing.application_approved"
+      const keys = key.split('.');
+      let translation: any = translationMap;
+      for (const k of keys) {
+        translation = translation?.[k];
+        if (translation === undefined) break;
+      }
 
-      let translation = translationMap[key] ?? key;
+      if (translation === undefined) {
+        return key; // fallback
+      }
 
-      // replace {{params}} if any
-      if (params) {
+      // Replace {{params}} in the translation string
+      if (params && typeof translation === 'string') {
         Object.entries(params).forEach(([param, value]) => {
-          translation = translation.replace(
-            `{{${param}}}`,
-            String(value)
-          );
+          translation = translation.replace(`{{${param}}}`, String(value));
         });
       }
+
       return translation;
     };
 

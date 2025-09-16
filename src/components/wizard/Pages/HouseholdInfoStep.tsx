@@ -1,11 +1,10 @@
 import { motion } from 'motion/react';
 import { ControllerRenderProps, UseFormReturn } from 'react-hook-form';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../ui/card';
-import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '../../ui/form';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '../../ui/form';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../ui/select';
 import { useI18n } from '../../../hooks/useI18n';
 import { Step2Data } from '../../../lib/zod';
-import { dependentsOptions, employmentStatusOptions, housingStatusOptions, maritalStatusOptions, monthlyIncomeOptions } from '../../../constants/data';
 import { FORM_FIELDS } from '../../../constants/constant';
 
 interface HouseholdInfoStepProps {
@@ -14,6 +13,9 @@ interface HouseholdInfoStepProps {
 
 export default function HouseholdInfoStep({ form }: HouseholdInfoStepProps) {
     const { t } = useI18n();
+
+    // Use options from i18n
+    const options = t('options', { returnObjects: true });
 
     return (
         <motion.div
@@ -27,7 +29,7 @@ export default function HouseholdInfoStep({ form }: HouseholdInfoStepProps) {
                 <CardHeader>
                     <CardTitle>{t('wizard.step2.title')}</CardTitle>
                     <CardDescription>
-                        {t("wizard.step2.employment_information")}
+                        {t("wizard.SecStep.employment_information")}
                     </CardDescription>
                 </CardHeader>
                 <CardContent>
@@ -47,9 +49,9 @@ export default function HouseholdInfoStep({ form }: HouseholdInfoStepProps) {
                                                 </SelectTrigger>
                                             </FormControl>
                                             <SelectContent>
-                                                {maritalStatusOptions.map((opt) => (
-                                                    <SelectItem key={opt.value} value={opt.value}>
-                                                        {opt.label}
+                                                {Object.entries(options.maritalStatus).map(([value, label]) => (
+                                                    <SelectItem key={value} value={value}>
+                                                        {label}
                                                     </SelectItem>
                                                 ))}
                                             </SelectContent>
@@ -66,9 +68,6 @@ export default function HouseholdInfoStep({ form }: HouseholdInfoStepProps) {
                                 render={({ field }: { field: ControllerRenderProps<Step2Data> }) => (
                                     <FormItem>
                                         <FormLabel>{t('form.dependents')}</FormLabel>
-                                        <FormDescription>
-                                            {t("wizard.step2.dependents_description")}
-                                        </FormDescription>
                                         <Select onValueChange={field.onChange} value={field.value}>
                                             <FormControl>
                                                 <SelectTrigger>
@@ -76,9 +75,9 @@ export default function HouseholdInfoStep({ form }: HouseholdInfoStepProps) {
                                                 </SelectTrigger>
                                             </FormControl>
                                             <SelectContent>
-                                                {dependentsOptions.map((opt) => (
-                                                    <SelectItem key={opt.value} value={opt.value}>
-                                                        {opt.label}
+                                                {Object.entries(options.dependents).map(([value, label]) => (
+                                                    <SelectItem key={value} value={value}>
+                                                        {label}
                                                     </SelectItem>
                                                 ))}
                                             </SelectContent>
@@ -102,9 +101,9 @@ export default function HouseholdInfoStep({ form }: HouseholdInfoStepProps) {
                                                 </SelectTrigger>
                                             </FormControl>
                                             <SelectContent>
-                                                {employmentStatusOptions.map((opt) => (
-                                                    <SelectItem key={opt.value} value={opt.value}>
-                                                        {opt.label}
+                                                {Object.entries(options.employmentStatus).map(([value, label]) => (
+                                                    <SelectItem key={value} value={value}>
+                                                        {label}
                                                     </SelectItem>
                                                 ))}
                                             </SelectContent>
@@ -121,9 +120,6 @@ export default function HouseholdInfoStep({ form }: HouseholdInfoStepProps) {
                                 render={({ field }: { field: ControllerRenderProps<Step2Data> }) => (
                                     <FormItem>
                                         <FormLabel>{t('form.monthly_income')}</FormLabel>
-                                        <FormDescription>
-                                            {t("wizard.step2.monthly_income_description")}
-                                        </FormDescription>
                                         <Select onValueChange={field.onChange} value={field.value}>
                                             <FormControl>
                                                 <SelectTrigger>
@@ -131,9 +127,9 @@ export default function HouseholdInfoStep({ form }: HouseholdInfoStepProps) {
                                                 </SelectTrigger>
                                             </FormControl>
                                             <SelectContent>
-                                                {monthlyIncomeOptions.map((opt) => (
-                                                    <SelectItem key={opt.value} value={opt.value}>
-                                                        {opt.label}
+                                                {Object.entries(options.monthlyIncome).map(([value, label]) => (
+                                                    <SelectItem key={value} value={value}>
+                                                        {label}
                                                     </SelectItem>
                                                 ))}
                                             </SelectContent>
@@ -150,9 +146,6 @@ export default function HouseholdInfoStep({ form }: HouseholdInfoStepProps) {
                                 render={({ field }: { field: ControllerRenderProps<Step2Data> }) => (
                                     <FormItem>
                                         <FormLabel>{t('form.housing_status')}</FormLabel>
-                                        <FormDescription>
-                                            {t("wizard.step2.housing_status_description")}
-                                        </FormDescription>
                                         <Select onValueChange={field.onChange} value={field.value}>
                                             <FormControl>
                                                 <SelectTrigger>
@@ -160,9 +153,9 @@ export default function HouseholdInfoStep({ form }: HouseholdInfoStepProps) {
                                                 </SelectTrigger>
                                             </FormControl>
                                             <SelectContent>
-                                                {housingStatusOptions.map((opt) => (
-                                                    <SelectItem key={opt.value} value={opt.value}>
-                                                        {opt.label}
+                                                {Object.entries(options.housingStatus).map(([value, label]) => (
+                                                    <SelectItem key={value} value={value}>
+                                                        {label}
                                                     </SelectItem>
                                                 ))}
                                             </SelectContent>

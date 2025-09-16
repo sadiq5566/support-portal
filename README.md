@@ -1,244 +1,277 @@
-# 🏛️ Government Social Support Portal
+❗ Problem Statement
+
+Applying for government social support is often confusing, frustrating, and inaccessible for many citizens.
+
+Common challenges include:
+
+* Complicated forms that are hard to understand and complete
+* Unclear instructions that lead to mistakes and rejected applications
+* Language barriers for non-native speakers and low-literacy users
+* Limited accessibility, excluding users with disabilities
+* No progress saving, forcing users to start over if they leave the page
+
+These issues cause delays, errors, and prevent vulnerable groups from receiving the help they need.
+
+The Government Social Support Portal was created to solve these problems by providing a streamlined, bilingual, and accessible application experience — complete with AI-powered writing assistance to guide users every step of the way.
+
+# Government Social Support Portal
+
+**A modern, accessible, and AI-powered government social support portal built with React + TypeScript**
+
+> **Last updated:** September 16, 2025
+
+---
+
+## Table of contents
+
+1. [Project overview](#project-overview)
+2. [Key features](#key-features)
+3. [Technology stack](#technology-stack)
+4. [Architecture & folder structure](#architecture--folder-structure)
+5. [Step-by-step quick start (development)](#step-by-step-quick-start-development)
+6. [Environment configuration](#environment-configuration)
+7. [Using the application (end‑user flow)](#using-the-application-end-user-flow)
+8. [AI Writing Assistant — notes & privacy](#ai-writing-assistant---notes--privacy)
+9. [Internationalization (i18n) & RTL support](#internationalization-i18n--rtl-support)
+10. [State management & persistence](#state-management--persistence)
+11. [Testing strategy](#testing-strategy)
 
 
-**A modern, accessible, and AI-powered government social support portal built with React**
+# Project overview
 
-## 📖 Overview
+A front-end application designed to simplify and streamline citizen applications for social support. The portal provides a 3-step wizard with form validation, automatic progress persistence, bilingual support (English & Arabic), and an integrated AI writing assistant to help users compose effective application statements.
 
-The Government Social Support Portal is a comprehensive front-end application designed to streamline the process of applying for financial assistance. Citizens can navigate through an intuitive 3-step wizard, receive AI-powered writing assistance, and submit applications in multiple languages with full accessibility support.
+Goals:
 
-## ✨ Features
+* Mobile-first and responsive layout with RTL support for Arabic
+* Minimal friction during application using autosave and clear validations
+* Privacy-aware AI assistance via OpenAI (or proxied backend)
 
-### 🎯 Core Functionality
-- **Multi-step Form Wizard** - Intuitive 3-step application process with progress tracking
-- **AI Writing Assistant** - OpenAI GPT-powered text generation for application statements
-- **Progress Persistence** - Automatic saving using LocalStorage to prevent data loss
-- **Mock API Integration** - Simulated backend submission for testing
+---
 
-### 🌐 User Experience
-- **Responsive Design** - Optimized for mobile, tablet, and desktop devices
-- **Bilingual Support** - English and Arabic with full RTL (Right-to-Left) support
-- **Accessibility First** - ARIA roles, keyboard navigation, and screen reader support
-- **Modern UI/UX** - Clean, government-standard interface with shadcn components
+# Key features
 
-### 🛠️ Developer Features
-- **TypeScript** - Full type safety and enhanced developer experience
-- **Component Testing** - Jest and React Testing Library integration
-- **Hot Reload** - Vite-powered development with instant updates
-- **Modular Architecture** - Scalable component structure
+* Multi-step form wizard (3 steps) with progress indicators
+* AI Writing Assistant (OpenAI GPT integration) for situation descriptions
+* LocalStorage-based progress persistence to avoid data loss
+* Bilingual UI with RTL support for Arabic
+* TypeScript, Redux Toolkit for state, React Hook Form for validation
+* Jest + React Testing Library for unit and integration tests
 
-## 🚀 Quick Start
+---
 
-### Prerequisites
+# Technology stack
 
-Ensure you have the following installed:
-- **Node.js** (v16.0.0 or higher)
-- **npm** (v7.0.0 or higher)
+| Responsibility | Technology                          |
+| -------------- | ----------------------------------- |
+| Framework      | React 18                            |
+| Language       | TypeScript                          |
+| Build tool     | Vite                                |
+| Styling        | Tailwind CSS + shadcn/ui            |
+| Forms          | React Hook Form + Zod (validation)  |
+| State          | Redux Toolkit                       |
+| Routing        | React Router                        |
+| HTTP           | Axios                               |
+| i18n           | react-i18next                       |
+| Tests          | Jest + React Testing Library        |
+| AI integration | OpenAI GPT-3.5 / server-proxied API |
 
-### Installation
+---
 
+# Architecture & folder structure
 
-1. **Install dependencies**
+![Architecture Diagram](./public/social_portal-diagram.jpeg)
+
+```
+SOCIAL SUPPORT PORTAL
+├── public
+│   └── social_portal-diagram.jpeg
+├── src
+│   ├── api
+│   │   ├── axios.ts
+│   │   └── openai.ts
+│   ├── components
+│   │   ├── ErrorBoundary
+│   │   │   └── ErrorBoundary.tsx
+│   │   ├── fallback
+│   │   │   └── ImageWithFallback.tsx
+│   │   ├── ui
+│   │   └── wizard
+│   │       ├── components (AIAssistant, WizardNavigation, etc.)
+│   │       └── formSteps (ProgressBar, Step components, pages)
+│   ├── constants
+│   ├── contexts
+│   ├── hooks
+│   ├── layout
+│   ├── lib
+│   ├── pages
+│   ├── redux
+│   │   ├── slices
+│   │   └── store.ts
+│   ├── services
+│   ├── styles
+│   ├── utils
+│   ├── App.tsx
+│   ├── main.tsx
+│   └── setupTests.ts
+├── .env.example
+```
+
+**Notes:**
+
+* `services/openai.ts` contains the client-side helper for calling your backend or the OpenAI API. For production, do **not** expose a raw OpenAI key to the browser; proxy requests through a backend.
+
+---
+
+# Step-by-step quick start (development)
+
+Follow these numbered steps to get the project running locally.
+
+1. **Clone the repository**
+
+   ```bash
+   git clone <repo-url> social-support-portal
+   cd social-support-portal
+   ```
+
+2. **Install dependencies**
+
    ```bash
    npm install
    ```
 
-2. **Configure environment variables**
+3. **Create environment file**
+
    ```bash
    cp .env.example .env
    ```
-   
-   Edit the `.env` file and add your OpenAI API key:
-   ```env
-   VITE_OPENAI_API_KEY=your_openai_api_key_here
-   ```
 
-3. **Start the development server**
+   Open `.env` and add your local settings (example below).
+
+4. **Add OpenAI key (local / testing)**
+
+   * For local development you can place a `VITE_OPENAI_API_KEY` in `.env` to enable AI features. **Important**: this is only acceptable for testing—do not commit `.env`.
+
+5. **Start the dev server**
+
    ```bash
    npm run dev
    ```
 
-4. **Open your browser**
-   Navigate to `http://localhost:5173`
+   * App will be available at `http://localhost:5173` by default.
 
-## 🔧 Available Scripts
+6. **Run tests**
 
-| Command | Description |
-|---------|-------------|
-| `npm run dev` | Start development server with hot reload |
-| `npm run build` | Build production-ready application |
-| `npm run test` | Run test suite with Jest |
-| `npm run test:watch` | Run tests in watch mode |
+   ```bash
+   npm run test
+   ```
 
-## 🏗️ Project Architecture
+7. **Build for production**
 
-```
-social-support-portal/
-│
-├── 📦 Configuration Files
-│   ├── package.json              # Dependencies and scripts
-│   ├── vite.config.ts            # Vite build configuration
-│   ├── tsconfig.json             # TypeScript configuration
-│   ├── index.html                # HTML entry point
-│   └── .env / .env.example       # Environment variables
-│
-└── 📁 src/                       # Application source code
-    │
-    ├── 🎯 Entry Points
-    │   ├── main.tsx               # React application entry
-    │   ├── App.tsx                # Root component
-    │   ├── index.css              # Global styles
-    │   └── setupTests.ts          # Testing configuration
-    │
-    ├── 🧩 components/             # Reusable UI components
-    │   ├── steps/                 # Step-specific components
-    │   │   ├── ProgressBar.tsx
-    │   │   ├── StepCircle.tsx
-    │   │   ├── StepIndicators.tsx
-    │   │   ├── StepInfo.tsx
-    │   │   └── StepItem.tsx
-    │   ├── wizard/                # Form wizard components
-    │   ├── ui/                    # Generic UI components
-    │   └── StepProgress.tsx
-    │
-    ├── 🔄 State Management
-    │   ├── contexts/              # React Context providers
-    │   └── redux/                 # Redux store and slices
-    │
-    ├── 🛠️ Utilities & Services
-    │   ├── hooks/                 # Custom React hooks
-    │   ├── lib/                   # Utility functions
-    │   ├── services/              # API communication
-    │   └── data/                  # Static/mock data
-    │
-    ├── 📄 Pages & Routing
-    │   ├── pages/                 # Page components
-    │   └── guidelines/            # App guidelines/config
-    │
-    └── 🎨 Styling
-        └── styles/                # CSS modules and themes
-```
+   ```bash
+   npm run build
+   ```
 
-## 🛡️ Environment Configuration
+   * The production-ready files are output to `dist/`.
 
-### Required Environment Variables
+8. **Preview production build**
 
-Create a `.env` file in the project root with the following variables:
+   * Option A: Use a static server to serve `dist/` (e.g. `serve` or `http-server`).
+
+---
+
+# Environment configuration
+
+Create a `.env` at the project root (do **not** commit it). Example variables:
 
 ```env
-# OpenAI Configuration
-VITE_OPENAI_API_KEY=your_openai_api_key_here
+# For local/testing AI (do not expose in production)
+VITE_OPENAI_API_KEY=sk-xxxxxxxxxx
 
+# Optional: backend base URL if you proxy AI requests
+VITE_API_BASE_URL=http://localhost:4000
 
-### Getting OpenAI API Key
+# App environment
+VITE_APP_ENV=development
+```
 
-1. Visit [OpenAI Platform](https://platform.openai.com/)
-2. Create an account or sign in
-3. Navigate to API Keys section
-4. Generate a new API key
-5. Add the key to your `.env` file
+**Security note:** Never commit your `.env` or API keys to source control. For production, set keys as environment variables in your hosting provider and proxy AI requests server-side.
 
-> ⚠️ **Important**: Never commit your `.env` file to version control. The `.env.example` file is provided as a template.
+---
 
-## 📚 Documentation
+# Using the application (end‑user flow)
 
-### Form Wizard Steps
+This is the step-by-step flow the user sees in the portal.
 
-1. **Step 1: Personal Information**
-   - Basic demographic data collection
-   - Form validation with real-time feedback
-   - Progress saving after completion
+1. **Open landing page** — user chooses to start an application or read guidance.
+2. **Step 1 — Personal Information**
 
-2. **Step 2: Financial Details**
-   - Income and expense information
-   - Supporting document references
-   - Automatic calculations and validations
+   1. Enter full name, ID, contact details, and address.
+   2. Inline validation shows errors in real-time.
+   3. On *Next*, data is validated and saved to Redux + LocalStorage.
+3. **Step 2 — Financial Details**
 
-3. **Step 3: Situation Description**
-   - AI-powered writing assistance
-   - Multiple text fields for detailed explanations
-   - Real-time character counting and suggestions
+   1. Enter income, expenses, and supporting document references.
+   2. Calculations (e.g., monthly net) are computed client-side for preview.
+   3. On *Next*, validated data is persisted.
+4. **Step 3 — Situation Description**
 
-### AI Writing Assistant
+   1. Users describe their situation in multiple fields.
+   2. Click the **AI** button to generate suggested wording. Users can accept, edit, or discard suggestions.
+   3. Character counters and accessibility helpers are present.
+5. **Review & Submit**
 
-The portal integrates with OpenAI's GPT-3.5-turbo model to help users articulate their situations effectively:
+   1. User sees a summary screen with editable sections.
+   2. Submit triggers a mock API call (or real backend when connected) and displays success/failure.
 
-- **Smart Prompting**: Context-aware suggestions based on user input
-- **Interactive Editing**: Users can accept, modify, or discard AI suggestions
-- **Error Handling**: Graceful degradation when AI services are unavailable
-- **Privacy First**: User data is processed securely with minimal retention
+---
 
-### Internationalization (i18n)
+# AI Writing Assistant — notes & privacy
 
-The application supports multiple languages with:
+1. **How it works**
 
-- **Dynamic Language Switching**: Real-time language toggle
-- **RTL Support**: Full right-to-left layout for Arabic
-- **Cultural Adaptation**: Date formats, number formats, and cultural norms
-- **Accessibility**: Screen reader support in multiple languages
+   * The UI sends a context-rich prompt to your configured backend service, which in turn calls OpenAI (recommended). The assistant returns suggested text that the user may accept or edit.
+2. **Privacy & retention**
 
-### State Management
+   * Keep prompts minimal and avoid sending unnecessary PII.
+   * Prefer a server-side proxy so keys are never exposed in the browser.
+   * If storing AI outputs, make retention policies explicit and minimal.
+3. **Error handling**
 
-The application uses Redux Toolkit for:
+   * The UI gracefully degrades if the AI service is unavailable: it shows helpful guidance and allows manual input.
 
-- **Form Data Persistence**: Automatic saving and restoration
-- **Step Navigation**: Centralized routing logic
-- **Error Handling**: Global error state management
-- **Loading States**: Consistent loading indicators
+---
 
-## 🧪 Testing
+# Internationalization (i18n) & RTL support
 
-### Running Tests
+1. `react-i18next` powers the translation layer.
+2. All visible strings should use translation keys in `src/constants/translations.ts`.
+3. RTL handling: `dir="rtl"` is toggled at the top-level container when Arabic is selected. Ensure layout and components respect the `dir` attribute.
+4. Date/number formatting must use `Intl` to adapt to locale.
+
+---
+
+# State management & persistence
+
+1. **Redux Toolkit** centralizes form state (`src/redux/slices/formSlice.ts`).
+2. Autosave: the wizard saves to `localStorage` after each step and hydrates on load.
+3. Keep sensitive data off client-side storage in production; prefer short-lived tokens or server-side session storage.
+
+---
+
+# Testing strategy
+
+1. **Unit tests**: small components and utilities (`src/tests/*`).
+2. **Form tests**: ensure validations and step transitions behave as expected (React Testing Library).
+3. **Run tests**
 
 ```bash
-# Run all tests
 npm run test
-
-# Run tests in watch mode
+# watch mode
 npm run test:watch
-
-# Run tests with coverage
+# coverage (if configured)
 npm run test:coverage
 ```
 
-### Testing Strategy
-
-- **Unit Tests**: Individual component functionality
-- **Form Validation Tests**: Input validation and error handling
-
-## 🔄 Deployment
-
-### Building for Production
-
-```bash
-npm run build
-```
-
-The built application will be available in the `dist/` directory.
-
-
-## 🛠️ Technology Stack
-
-| Category | Technology | Purpose |
-|----------|------------|---------|
-| **Framework** | React 18 | Component-based UI development |
-| **Language** | TypeScript | Type safety and developer experience |
-| **Build Tool** | Vite | Fast development and optimized builds |
-| **Styling** | Tailwind CSS + shadcn/ui | Utility-first styling with components |
-| **Forms** | React Hook Form | Efficient form handling and validation |
-| **State** | Redux Toolkit | Predictable state management |
-| **Routing** | React Router | Client-side navigation |
-| **HTTP** | Axios | API communication |
-| **i18n** | react-i18next | Internationalization |
-| **Testing** | Jest + RTL | Comprehensive testing suite |
-| **AI** | OpenAI GPT-3.5 | Intelligent writing assistance |
-
-## 🚧 Roadmap
-
-### Future Phase: Core Enhancements
-- [ ] Server-side validation integration
-- [ ] Real database connectivity
-- [ ] Enhanced error handling and logging
-- [ ] Performance optimization
-
+---
 

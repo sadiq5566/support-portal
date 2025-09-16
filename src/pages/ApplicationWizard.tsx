@@ -5,7 +5,7 @@ import { useI18n } from '../hooks/useI18n';
 import { useLocalStorage } from '../hooks/useLocalStorage';
 import { useLocationData } from '../hooks/useLocationData';
 import { useWizardForm } from '../hooks/useWizardForm';
-import WizardProgress from '../components/formSteps/WizardProgress';
+import WizardProgress from '../components/wizard/formSteps/WizardProgress';
 import PersonalInfoStep from '../components/wizard/Pages/PersonalInfoStep';
 import HouseholdInfoStep from '../components/wizard/Pages/HouseholdInfoStep';
 import SituationStep from '../components/wizard/Pages/SituationStep';

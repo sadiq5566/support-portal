@@ -56,7 +56,7 @@ export default function AIAssistant({
     const finalText = isEditing ? editedSuggestion : suggestion;
     onAccept(finalText);
     onOpenChange(false);
-    toast.success(TOAST_MESSAGES.suggestionAccepted);
+    toast.success(t(TOAST_MESSAGES.suggestionAccepted));
   };
 
   const handleDiscard = () => {
@@ -125,7 +125,7 @@ export default function AIAssistant({
                 >
                   <div>
                     <h4 className="font-medium mb-2">
-                      {t("wizard.step3.ai_suggestion")}
+                      {t("wizard.thirdStep.ai_suggestion")}
                     </h4>
                     {isEditing ? (
                       <Textarea

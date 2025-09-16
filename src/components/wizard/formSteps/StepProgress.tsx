@@ -1,8 +1,8 @@
-import { WIZARD_STATUS } from '../../constants/constant';
-import { useI18n } from '../../hooks/useI18n';
+import { WIZARD_STATUS } from '../../../constants/constant';
 import { StepIndicators } from './StepIndicators'
 import { ProgressBar } from './ProgressBar'
 import { User, Home, FileText } from 'lucide-react';
+import { useI18n } from '../../../hooks/useI18n';
 
 interface StepProgressProps {
     currentStep: number;

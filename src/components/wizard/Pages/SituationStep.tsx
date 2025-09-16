@@ -89,21 +89,21 @@ export default function SituationStep({ form, formData, openAIAssistant }: Situa
                             {renderTextareaField(
                                 FORM_FIELDS.FINANCIAL_SITUATION,
                                 'form.financial_situation',
-                                'wizard.step3.financial_situation',
+                                'wizard.thirdStep.financial_situation',
                                 'placeholder.financialSituation',
                                 'wizard.financial_summary_prompt'
                             )}
                             {renderTextareaField(
                                 FORM_FIELDS.HELP_NEEDED,
                                 'form.help_needed',
-                                'wizard.step3.assistance_type',
+                                'wizard.thirdStep.assistance_type',
                                 'placeholder.helpNeeded',
                                 'wizard.help_needed'
                             )}
                             {renderTextareaField(
                                 FORM_FIELDS.REASON_OF_APPLY,
                                 'form.reasonOfApply',
-                                'wizard.step3.reason_for_applying',
+                                'wizard.thirdStep.reason_for_applying',
                                 'placeholder.reasonOfApply',
                                 'wizard.reason_of_apply'
                             )}

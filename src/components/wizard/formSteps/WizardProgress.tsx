@@ -1,6 +1,6 @@
 import { motion } from 'motion/react';
-import { useI18n } from '../../hooks/useI18n';
 import StepProgress from "../formSteps/StepProgress"
+import { useI18n } from '../../../hooks/useI18n';
 interface WizardProgressProps {
     currentStep: number;
     totalSteps: number;

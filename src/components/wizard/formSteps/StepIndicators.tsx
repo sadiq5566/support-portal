@@ -1,4 +1,4 @@
-import { WIZARD_STATUS } from '../../constants/constant';
+import { WIZARD_STATUS } from '../../../constants/constant';
 import { StepItem } from './StepItem';
 
 interface StepIndicatorsProps {

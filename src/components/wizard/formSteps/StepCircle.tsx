@@ -1,6 +1,7 @@
 import { Check } from 'lucide-react';
-import { Button } from '../ui/button';
-import { cn } from '../../utils/utils';
+import { Button } from '../../ui/button';
+import { cn } from '../../../utils/utils';
+
 
 interface StepCircleProps {
     stepNumber: number;

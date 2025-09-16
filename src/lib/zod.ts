@@ -21,9 +21,9 @@ export const getStep1Schema = (t: TFunction) => z.object({
   state: z.string().min(1, t('validation.stateRequired')),
   city: z.string().min(1, t('validation.cityRequired')),
   phone: z.string()
-    .min(10, t('validation.phoneInvalid'))
-    .regex(/^\+?[0-9\s\-\(\)]{10,20}$/, t('validation.phoneInvalid')),
-  email: z.string().email(t('validation.emailInvalid')),
+    .min(10, t('validation.phoneMin'))
+    .regex(/^\+?[0-9\s\-\(\)]{10,20}$/, t('validation.phoneInvalidChars')),
+  email: z.string().email(t('validation.phoneInvalidChars')),
 });
 
 export const getStep2Schema = (t: TFunction) => z.object({
@@ -40,10 +40,10 @@ export const getStep3Schema = (t: TFunction) => z.object({
     .max(500, t('validation.financialSituationMax')),
   helpNeeded: z.string({ required_error: t('validation.required') })
     .min(20, t('validation.helpNeededMin'))
-    .max(300, t('validation.helpNeededMax')),
+    .max(500, t('validation.helpNeededMax')),
   reasonOfApply: z.string({ required_error: t('validation.required') })
     .min(20, t('validation.reasonOfApplyMin'))
-    .max(300, t('validation.reasonOfApplyMax')),
+    .max(500, t('validation.reasonOfApplyMax')),
 });
 
 export type Step1Data = z.infer<ReturnType<typeof getStep1Schema>>;

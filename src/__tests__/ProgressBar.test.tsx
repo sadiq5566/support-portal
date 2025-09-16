@@ -1,5 +1,5 @@
 import { render } from '@testing-library/react';
-import { ProgressBar } from '../components/steps/ProgressBar';
+import { ProgressBar } from '../components/wizard/formSteps/ProgressBar';
 
 describe('ProgressBar', () => {
     it('renders correctly', () => {

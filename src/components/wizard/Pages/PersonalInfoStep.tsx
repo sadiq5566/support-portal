@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { motion } from 'motion/react';
 import { ControllerRenderProps, UseFormReturn } from 'react-hook-form';
 import { Card, CardContent, CardHeader, CardTitle } from '../../ui/card';
@@ -6,29 +7,56 @@ import { Input } from '../../ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../ui/select';
 import { useI18n } from '../../../hooks/useI18n';
 import { Step1Data } from '../../../lib/zod';
-import { genderOptions, locationData, Country, State } from '../../../constants/data';
 import { FORM_FIELDS } from '../../../constants/constant';
 
 interface PersonalInfoStepProps {
     form: UseFormReturn<Step1Data>;
-    selectedCountry: Country | null;
-    selectedState: State | null;
-    availableStates: State[];
-    availableCities: string[];
-    handleCountryChange: (countryCode: string) => void;
-    handleStateChange: (stateCode: string) => void;
 }
 
-export default function PersonalInfoStep({
-    form,
-    selectedCountry,
-    selectedState,
-    availableStates,
-    availableCities,
-    handleCountryChange,
-    handleStateChange,
-}: PersonalInfoStepProps) {
+export default function PersonalInfoStep({ form }: PersonalInfoStepProps) {
     const { t } = useI18n();
+
+    // Gender options from i18n
+    const genderOptions = [
+        { value: 'male', label: t('options.gender.male') },
+        { value: 'female', label: t('options.gender.female') },
+        { value: 'other', label: t('options.gender.other') },
+        { value: 'preferNotToSay', label: t('options.gender.preferNotToSay') },
+    ];
+
+    // Countries from i18n
+    const countries = t('options.countries', { returnObjects: true }) as {
+        code: string;
+        name: string;
+        states: { code: string; name: string; cities: string[] }[];
+    }[];
+
+    // Local state for country, state, and city selections
+    const [selectedCountry, setSelectedCountry] = useState<string | null>(null);
+    const [selectedState, setSelectedState] = useState<string | null>(null);
+    const [states, setStates] = useState<{ code: string; name: string; cities: string[] }[]>([]);
+    const [cities, setCities] = useState<string[]>([]);
+
+    // Handle country change
+    const onCountryChange = (countryCode: string) => {
+        setSelectedCountry(countryCode);
+        setSelectedState(null);
+        const countryObj = countries.find(c => c.code === countryCode);
+        setStates(countryObj?.states || []);
+        setCities([]);
+        form.setValue(FORM_FIELDS.COUNTRY, countryCode);
+        form.setValue(FORM_FIELDS.STATE, '');
+        form.setValue(FORM_FIELDS.CITY, '');
+    };
+
+    // Handle state change
+    const onStateChange = (stateCode: string) => {
+        setSelectedState(stateCode);
+        const stateObj = states.find(s => s.code === stateCode);
+        setCities(stateObj?.cities || []);
+        form.setValue(FORM_FIELDS.STATE, stateCode);
+        form.setValue(FORM_FIELDS.CITY, '');
+    };
 
     return (
         <motion.div
@@ -53,7 +81,7 @@ export default function PersonalInfoStep({
                                     <FormItem>
                                         <FormLabel>{t('form.first_name')}</FormLabel>
                                         <FormControl>
-                                            <Input placeholder={t("placeholder.firstName")} {...field} />
+                                            <Input placeholder={t('placeholder.firstName')} {...field} />
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>
@@ -68,7 +96,7 @@ export default function PersonalInfoStep({
                                     <FormItem>
                                         <FormLabel>{t('form.last_name')}</FormLabel>
                                         <FormControl>
-                                            <Input placeholder={t("placeholder.lastName")} {...field} />
+                                            <Input placeholder={t('placeholder.lastName')} {...field} />
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>
@@ -83,7 +111,7 @@ export default function PersonalInfoStep({
                                     <FormItem>
                                         <FormLabel>{t('form.phone')}</FormLabel>
                                         <FormControl>
-                                            <Input type="tel" placeholder={t("placeholder.phone")} {...field} />
+                                            <Input type="tel" placeholder={t('placeholder.phone')} {...field} />
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>
@@ -98,7 +126,7 @@ export default function PersonalInfoStep({
                                     <FormItem>
                                         <FormLabel>{t('form.email')}</FormLabel>
                                         <FormControl>
-                                            <Input type="email" placeholder={t("placeholder.email")} {...field} />
+                                            <Input type="email" placeholder={t('placeholder.email')} {...field} />
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>
@@ -119,7 +147,7 @@ export default function PersonalInfoStep({
                                                 </SelectTrigger>
                                             </FormControl>
                                             <SelectContent>
-                                                {genderOptions.map((option) => (
+                                                {genderOptions.map(option => (
                                                     <SelectItem key={option.value} value={option.value}>
                                                         {option.label}
                                                     </SelectItem>
@@ -139,8 +167,10 @@ export default function PersonalInfoStep({
                                     <FormItem>
                                         <FormLabel>{t('form.date_of_birth')}</FormLabel>
                                         <FormControl>
-                                            <Input type="date" {...field}
-                                                max={new Date().toISOString().split("T")[0]}
+                                            <Input
+                                                type="date"
+                                                {...field}
+                                                max={new Date().toISOString().split('T')[0]}
                                             />
                                         </FormControl>
                                         <FormMessage />
@@ -156,7 +186,7 @@ export default function PersonalInfoStep({
                                     <FormItem>
                                         <FormLabel>{t('form.national_id')}</FormLabel>
                                         <FormControl>
-                                            <Input placeholder={t("placeholder.nationalId")} {...field} />
+                                            <Input placeholder={t('placeholder.nationalId')} {...field} />
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>
@@ -170,14 +200,14 @@ export default function PersonalInfoStep({
                                 render={({ field }: { field: ControllerRenderProps<Step1Data> }) => (
                                     <FormItem>
                                         <FormLabel>{t('form.country')}</FormLabel>
-                                        <Select onValueChange={handleCountryChange} value={field.value}>
+                                        <Select onValueChange={onCountryChange} value={selectedCountry || ''}>
                                             <FormControl>
                                                 <SelectTrigger>
-                                                    <SelectValue placeholder={t("placeholder.selectCountry")} />
+                                                    <SelectValue placeholder={t('placeholder.selectCountry')} />
                                                 </SelectTrigger>
                                             </FormControl>
                                             <SelectContent>
-                                                {locationData.map((country) => (
+                                                {countries.map(country => (
                                                     <SelectItem key={country.code} value={country.code}>
                                                         {country.name}
                                                     </SelectItem>
@@ -197,8 +227,8 @@ export default function PersonalInfoStep({
                                     <FormItem>
                                         <FormLabel>{t('form.state')}</FormLabel>
                                         <Select
-                                            onValueChange={handleStateChange}
-                                            value={field.value}
+                                            onValueChange={onStateChange}
+                                            value={selectedState || ''}
                                             disabled={!selectedCountry}
                                         >
                                             <FormControl>
@@ -213,7 +243,7 @@ export default function PersonalInfoStep({
                                                 </SelectTrigger>
                                             </FormControl>
                                             <SelectContent>
-                                                {availableStates.map((state) => (
+                                                {states.map(state => (
                                                     <SelectItem key={state.code} value={state.code}>
                                                         {state.name}
                                                     </SelectItem>
@@ -234,7 +264,7 @@ export default function PersonalInfoStep({
                                         <FormLabel>{t('form.city')}</FormLabel>
                                         <Select
                                             onValueChange={field.onChange}
-                                            value={field.value}
+                                            value={field.value || ''}
                                             disabled={!selectedState}
                                         >
                                             <FormControl>
@@ -249,7 +279,7 @@ export default function PersonalInfoStep({
                                                 </SelectTrigger>
                                             </FormControl>
                                             <SelectContent>
-                                                {availableCities.map((city) => (
+                                                {cities.map(city => (
                                                     <SelectItem key={city} value={city}>
                                                         {city}
                                                     </SelectItem>
@@ -269,7 +299,7 @@ export default function PersonalInfoStep({
                                     <FormItem className="md:col-span-2">
                                         <FormLabel>{t('form.address')}</FormLabel>
                                         <FormControl>
-                                            <Input placeholder={t("placeholder.address")} {...field} />
+                                            <Input placeholder={t('placeholder.address')} {...field} />
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>

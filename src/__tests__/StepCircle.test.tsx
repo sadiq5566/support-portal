@@ -1,7 +1,7 @@
 import * as ReactTestingLibrary from '@testing-library/react';
 import { describe, it, expect, vi } from 'vitest';
 import { User } from 'lucide-react';
-import { StepCircle } from '../components/steps/StepCircle';
+import { StepCircle } from '../components/wizard/formSteps/StepCircle';
 const { render, fireEvent } = ReactTestingLibrary;
 const screen = ReactTestingLibrary.screen;
 

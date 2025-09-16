@@ -1,5 +1,5 @@
-import { WIZARD_STATUS } from "../../constants/constant";
-import { cn } from "../../utils/utils";
+import { cn } from "../../../utils/utils";
+import { WIZARD_STATUS } from "../../../constants/constant";
 
 interface StepInfoProps {
     title: string;
