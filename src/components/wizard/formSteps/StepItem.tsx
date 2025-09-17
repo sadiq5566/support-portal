@@ -1,4 +1,4 @@
-import { WIZARD_STATUS } from '../../constants/constant';
+import { WIZARD_STATUS } from '../../../constants/constant';
 import { StepCircle } from './StepCircle';
 import { StepInfo } from './StepInfo';
 

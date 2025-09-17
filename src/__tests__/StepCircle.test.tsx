@@ -4,6 +4,7 @@ import { User } from 'lucide-react';
 import { StepCircle } from '../components/wizard/formSteps/StepCircle';
 const { render, fireEvent } = ReactTestingLibrary;
 const screen = ReactTestingLibrary.screen;
+import '@testing-library/jest-dom';
 
 describe('StepCircle', () => {
     const defaultProps = {

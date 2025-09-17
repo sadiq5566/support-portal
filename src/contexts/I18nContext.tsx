@@ -42,10 +42,8 @@ export function I18nProvider({ children }: { children: React.ReactNode }) {
 
   const value = useMemo<I18nContextType>(() => {
     const t: I18nContextType['t'] = (key, params) => {
-      // Get the map for the current language
       const translationMap = translations[language] as Record<string, any>;
 
-      // Support nested keys like "landing.application_approved"
       const keys = key.split('.');
       let translation: any = translationMap;
       for (const k of keys) {
@@ -54,10 +52,9 @@ export function I18nProvider({ children }: { children: React.ReactNode }) {
       }
 
       if (translation === undefined) {
-        return key; // fallback
+        return key;
       }
 
-      // Replace {{params}} in the translation string
       if (params && typeof translation === 'string') {
         Object.entries(params).forEach(([param, value]) => {
           translation = translation.replace(`{{${param}}}`, String(value));

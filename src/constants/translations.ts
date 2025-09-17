@@ -209,6 +209,7 @@ suggestion: {
       invalid_phone: "Please enter a valid phone number",
       min_length: "Must be at least {{min}} characters",
       max_length: "Must be no more than {{max}} characters",
+      useI18n: "useI18n must be used within I18nProvider",
       "404": {
         title: "Page Not Found",
         description: "The page you are looking for does not exist.",
@@ -257,7 +258,6 @@ suggestion: {
         suggestion4: "Check your internet connection.",
       },
       useTheme: "useTheme must be used within a ThemeProvider",
-      useI18n: "useI18n must be used within an I18nProvider",
       boundaryCaught: "Error caught by ErrorBoundary",
     },
     refresh_page: "Refresh Page",
@@ -667,6 +667,7 @@ status: {
       invalid_phone: "يرجى إدخال رقم هاتف صالح",
       min_length: "يجب أن يكون على الأقل {{min}} حرفًا",
       max_length: "يجب ألا يزيد عن {{max}} حرفًا",
+      useI18n: "يجب استخدام useI18n داخل I18nProvider",
       "404": {
         title: "الصفحة غير موجودة",
         description: "الصفحة التي تبحث عنها غير موجودة.",
@@ -715,7 +716,6 @@ status: {
         suggestion4: "تحقق من اتصال الإنترنت.",
       },
       useTheme: "يجب استخدام useTheme داخل ThemeProvider",
-      useI18n: "يجب استخدام useI18n داخل I18nProvider",
       boundaryCaught: "تم التقاط الخطأ بواسطة ErrorBoundary",
     },
     refresh_page: "تحديث الصفحة",

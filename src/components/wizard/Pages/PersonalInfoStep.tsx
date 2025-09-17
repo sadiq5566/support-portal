@@ -24,12 +24,13 @@ export default function PersonalInfoStep({ form }: PersonalInfoStepProps) {
         { value: 'preferNotToSay', label: t('options.gender.preferNotToSay') },
     ];
 
-    // Countries from i18n
-    const countries = t('options.countries', { returnObjects: true }) as {
+    type Country = {
         code: string;
         name: string;
         states: { code: string; name: string; cities: string[] }[];
-    }[];
+    };
+
+    const countries = t('options.countries', { returnObjects: true } as any) as unknown as Country[];
 
     // Local state for country, state, and city selections
     const [selectedCountry, setSelectedCountry] = useState<string | null>(null);

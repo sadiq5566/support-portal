@@ -1,5 +1,6 @@
 import { render } from '@testing-library/react';
 import { ProgressBar } from '../components/wizard/formSteps/ProgressBar';
+import '@testing-library/jest-dom';
 
 describe('ProgressBar', () => {
     it('renders correctly', () => {

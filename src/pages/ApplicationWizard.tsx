@@ -64,9 +64,9 @@ export default function ApplicationWizard() {
   const getCurrentFieldValue = (): string => {
     switch (currentStep) {
       case WIZARD_STEPS.PERSONAL_INFO:
-        return step1Form.getValues()[aiAssistant.fieldName as keyof Step1Data] || aiAssistant.customQuestion;
+        return step1Form.getValues()[aiAssistant.fieldName as keyof Step1Data];
       case WIZARD_STEPS.HOUSEHOLD_INFO:
-        return step2Form.getValues()[aiAssistant.fieldName as keyof Step2Data] || aiAssistant.customQuestion;
+        return step2Form.getValues()[aiAssistant.fieldName as keyof Step2Data];
       case WIZARD_STEPS.SITUATION:
         return step3Form.getValues()[aiAssistant.fieldName as keyof Step3Data] || aiAssistant.customQuestion;
       default:

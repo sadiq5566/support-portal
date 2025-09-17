@@ -6,7 +6,7 @@ export function useI18n() {
   const context = useContext(I18nContext);
 
   if (!context) {
-    throw new Error(translations.en["error.useI18n"]);
+    throw new Error(translations.en.error.useI18n);
   }
 
   return context;

@@ -7,6 +7,15 @@ import { useI18n } from '../../../hooks/useI18n';
 import { Step2Data } from '../../../lib/zod';
 import { FORM_FIELDS } from '../../../constants/constant';
 
+// Define the structure of your i18n options
+interface I18nOptions {
+    maritalStatus: Record<string, string>;
+    dependents: Record<string, string>;
+    employmentStatus: Record<string, string>;
+    monthlyIncome: Record<string, string>;
+    housingStatus: Record<string, string>;
+}
+
 interface HouseholdInfoStepProps {
     form: UseFormReturn<Step2Data>;
 }
@@ -14,8 +23,37 @@ interface HouseholdInfoStepProps {
 export default function HouseholdInfoStep({ form }: HouseholdInfoStepProps) {
     const { t } = useI18n();
 
-    // Use options from i18n
-    const options = t('options', { returnObjects: true });
+    // Properly type the options with error handling
+    const getOptions = (): I18nOptions => {
+        try {
+            const rawOptions = t('options', { returnObjects: true } as any);
+
+            // Type assertion with validation
+            if (typeof rawOptions === 'object' && rawOptions !== null) {
+                return rawOptions as I18nOptions;
+            }
+
+            // Fallback in case of issues
+            return {
+                maritalStatus: {},
+                dependents: {},
+                employmentStatus: {},
+                monthlyIncome: {},
+                housingStatus: {}
+            };
+        } catch (error) {
+            console.warn('Failed to load i18n options:', error);
+            return {
+                maritalStatus: {},
+                dependents: {},
+                employmentStatus: {},
+                monthlyIncome: {},
+                housingStatus: {}
+            };
+        }
+    };
+
+    const options = getOptions();
 
     return (
         <motion.div
@@ -51,7 +89,7 @@ export default function HouseholdInfoStep({ form }: HouseholdInfoStepProps) {
                                             <SelectContent>
                                                 {Object.entries(options.maritalStatus).map(([value, label]) => (
                                                     <SelectItem key={value} value={value}>
-                                                        {label}
+                                                        {String(label)}
                                                     </SelectItem>
                                                 ))}
                                             </SelectContent>
@@ -77,7 +115,7 @@ export default function HouseholdInfoStep({ form }: HouseholdInfoStepProps) {
                                             <SelectContent>
                                                 {Object.entries(options.dependents).map(([value, label]) => (
                                                     <SelectItem key={value} value={value}>
-                                                        {label}
+                                                        {String(label)}
                                                     </SelectItem>
                                                 ))}
                                             </SelectContent>
@@ -103,7 +141,7 @@ export default function HouseholdInfoStep({ form }: HouseholdInfoStepProps) {
                                             <SelectContent>
                                                 {Object.entries(options.employmentStatus).map(([value, label]) => (
                                                     <SelectItem key={value} value={value}>
-                                                        {label}
+                                                        {String(label)}
                                                     </SelectItem>
                                                 ))}
                                             </SelectContent>
@@ -129,7 +167,7 @@ export default function HouseholdInfoStep({ form }: HouseholdInfoStepProps) {
                                             <SelectContent>
                                                 {Object.entries(options.monthlyIncome).map(([value, label]) => (
                                                     <SelectItem key={value} value={value}>
-                                                        {label}
+                                                        {String(label)}
                                                     </SelectItem>
                                                 ))}
                                             </SelectContent>
@@ -155,7 +193,7 @@ export default function HouseholdInfoStep({ form }: HouseholdInfoStepProps) {
                                             <SelectContent>
                                                 {Object.entries(options.housingStatus).map(([value, label]) => (
                                                     <SelectItem key={value} value={value}>
-                                                        {label}
+                                                        {String(label)}
                                                     </SelectItem>
                                                 ))}
                                             </SelectContent>
