@@ -33,7 +33,6 @@ export default function App() {
                       </Route>
                     </Routes>
                   </Suspense>
-
                 </AnimatePresence>
                 <Toaster />
               </div>

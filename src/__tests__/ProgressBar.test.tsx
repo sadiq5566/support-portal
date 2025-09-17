@@ -15,7 +15,6 @@ describe('ProgressBar', () => {
 
     it('renders Progress component', () => {
         const { container } = render(<ProgressBar value={75} />);
-        // Check if any element exists (Progress component should render something)
         expect(container.querySelector('*')).toBeInTheDocument();
     });
 

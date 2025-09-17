@@ -36,7 +36,6 @@ export const FORM_FIELDS = {
 export const AI_ASSISTANT_DEFAULTS = {
   isOpen: false,
   fieldName: '',
-  fieldValue: '',
   fieldLabel: '',
   customQuestion: '',
 };

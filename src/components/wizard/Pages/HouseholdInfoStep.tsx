@@ -23,17 +23,14 @@ interface HouseholdInfoStepProps {
 export default function HouseholdInfoStep({ form }: HouseholdInfoStepProps) {
     const { t } = useI18n();
 
-    // Properly type the options with error handling
     const getOptions = (): I18nOptions => {
         try {
             const rawOptions = t('options', { returnObjects: true } as any);
 
-            // Type assertion with validation
             if (typeof rawOptions === 'object' && rawOptions !== null) {
                 return rawOptions as I18nOptions;
             }
 
-            // Fallback in case of issues
             return {
                 maritalStatus: {},
                 dependents: {},
@@ -42,7 +39,6 @@ export default function HouseholdInfoStep({ form }: HouseholdInfoStepProps) {
                 housingStatus: {}
             };
         } catch (error) {
-            console.warn('Failed to load i18n options:', error);
             return {
                 maritalStatus: {},
                 dependents: {},

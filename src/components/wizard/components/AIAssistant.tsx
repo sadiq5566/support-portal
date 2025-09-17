@@ -10,9 +10,8 @@ import { TOAST_MESSAGES } from '../../../constants/constant';
 import { useI18n } from '../../../hooks/useI18n';
 
 interface AIAssistantProps {
-  fieldName: string;
+  fieldName?: string;
   fieldLabel: string;
-  fieldValue: string;
   currentValue: any;
   onAccept: (suggestion: string) => void;
   isOpen: boolean;
@@ -21,8 +20,6 @@ interface AIAssistantProps {
 
 
 export default function AIAssistant({
-  fieldName,
-  fieldValue,
   fieldLabel,
   currentValue,
   onAccept,

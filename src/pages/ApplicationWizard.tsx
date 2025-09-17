@@ -33,7 +33,6 @@ export default function ApplicationWizard() {
   const [aiAssistant, setAiAssistant] = useState(AI_ASSISTANT_DEFAULTS);
   const [error, setError] = useState<Error | null>(null);
 
-  const locationData = useLocationData();
   const { step1Form, step2Form, step3Form, getCurrentForm } = useWizardForm(formData);
 
   const progress = (currentStep / TOTAL_STEPS) * 100;
@@ -44,17 +43,10 @@ export default function ApplicationWizard() {
     if (savedStep) setCurrentStep(Number(savedStep));
   }, []);
 
-  // Initialize location data
-  useEffect(() => {
-    if (formData.country) {
-      locationData.initializeFromData(formData.country, formData.state);
-    }
-  }, [formData.country, formData.state]);
 
   // Auto-save on form change
   useEffect(() => {
     const currentForm = getCurrentForm(currentStep);
-
     currentForm.watch((values) => {
       setFormData(prev => ({ ...prev, ...values }));
     });
@@ -147,30 +139,15 @@ export default function ApplicationWizard() {
     }
   };
 
-  const openAIAssistant = (fieldName: string, fieldValue: string, fieldLabel: string, customQuestion: string) => {
-    console.log('customQuestion is', customQuestion)
-    setAiAssistant({ isOpen: true, fieldName, fieldValue, fieldLabel, customQuestion });
+  const openAIAssistant = (fieldName: string, fieldLabel: string, customQuestion: string) => {
+    setAiAssistant({ isOpen: true, fieldName, fieldLabel, customQuestion });
   };
 
   const handleAIAccept = (suggestion: string) => {
     setCurrentFieldValue(suggestion);
   };
 
-  const commonStepProps = { formData };
-  const locationProps = {
-    ...locationData,
-    handleCountryChange: (countryCode: string) => {
-      locationData.handleCountryChange(countryCode);
-      step1Form.setValue(FORM_FIELDS.COUNTRY, countryCode);
-      step1Form.setValue(FORM_FIELDS.STATE, '');
-      step1Form.setValue(FORM_FIELDS.CITY, '');
-    },
-    handleStateChange: (stateCode: string) => {
-      locationData.handleStateChange(stateCode);
-      step1Form.setValue(FORM_FIELDS.STATE, stateCode);
-      step1Form.setValue(FORM_FIELDS.CITY, '');
-    },
-  };
+
 
   if (error) throw error;
 
@@ -181,11 +158,11 @@ export default function ApplicationWizard() {
 
         <AnimatePresence mode="wait">
           {currentStep === WIZARD_STEPS.PERSONAL_INFO && (
-            <PersonalInfoStep form={step1Form} {...commonStepProps} {...locationProps} />
+            <PersonalInfoStep form={step1Form} />
           )}
-          {currentStep === WIZARD_STEPS.HOUSEHOLD_INFO && <HouseholdInfoStep form={step2Form} {...commonStepProps} />}
+          {currentStep === WIZARD_STEPS.HOUSEHOLD_INFO && <HouseholdInfoStep form={step2Form} />}
           {currentStep === WIZARD_STEPS.SITUATION && (
-            <SituationStep form={step3Form} {...commonStepProps} openAIAssistant={openAIAssistant} />
+            <SituationStep form={step3Form} formData={formData} openAIAssistant={openAIAssistant} />
           )}
         </AnimatePresence>
 
@@ -201,8 +178,6 @@ export default function ApplicationWizard() {
       </div>
 
       <AIAssistant
-        fieldName={aiAssistant.fieldName}
-        fieldValue={aiAssistant.fieldValue}
         fieldLabel={aiAssistant.fieldLabel}
         currentValue={getCurrentFieldValue()}
         onAccept={handleAIAccept}

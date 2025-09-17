@@ -12,7 +12,7 @@ import { FORM_FIELDS } from '../../../constants/constant';
 interface SituationStepProps {
     form: UseFormReturn<Step3Data>;
     formData: any;
-    openAIAssistant: (fieldName: string, fieldValue: string, fieldLabel: string, openAIAssistant: string) => void;
+    openAIAssistant: (fieldName: string, fieldLabel: string, openAIAssistant: string) => void;
 }
 
 export default function SituationStep({ form, formData, openAIAssistant }: SituationStepProps) {
@@ -45,10 +45,9 @@ export default function SituationStep({ form, formData, openAIAssistant }: Situa
                             variant="ghost"
                             size="icon"
                             className="absolute top-2 right-2 h-8 w-8"
-                            onClick={() =>
+                            onClick={() => {
                                 openAIAssistant(
                                     fieldName,
-                                    field.value,
                                     t(labelKey),
                                     t(promptKey, {
                                         employmentStatus: formData.employmentStatus,
@@ -58,6 +57,9 @@ export default function SituationStep({ form, formData, openAIAssistant }: Situa
                                         dependents: formData.dependents,
                                     })
                                 )
+
+                            }
+
                             }
                         >
                             <Sparkles className="h-4 w-4 text-blue-500" />

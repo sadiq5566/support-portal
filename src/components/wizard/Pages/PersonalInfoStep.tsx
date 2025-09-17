@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect } from 'react';
 import { motion } from 'motion/react';
 import { ControllerRenderProps, UseFormReturn } from 'react-hook-form';
 import { Card, CardContent, CardHeader, CardTitle } from '../../ui/card';
@@ -8,6 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '.
 import { useI18n } from '../../../hooks/useI18n';
 import { Step1Data } from '../../../lib/zod';
 import { FORM_FIELDS } from '../../../constants/constant';
+import { useLocationData } from '../../../hooks/useLocationData';
 
 interface PersonalInfoStepProps {
     form: UseFormReturn<Step1Data>;
@@ -15,8 +16,14 @@ interface PersonalInfoStepProps {
 
 export default function PersonalInfoStep({ form }: PersonalInfoStepProps) {
     const { t } = useI18n();
+    const locationData = useLocationData(
+        form.getValues().country,
+        form.getValues().state,
+        form.getValues().city
+    );
 
-    // Gender options from i18n
+    const formValues = form.getValues();
+
     const genderOptions = [
         { value: 'male', label: t('options.gender.male') },
         { value: 'female', label: t('options.gender.female') },
@@ -24,39 +31,30 @@ export default function PersonalInfoStep({ form }: PersonalInfoStepProps) {
         { value: 'preferNotToSay', label: t('options.gender.preferNotToSay') },
     ];
 
-    type Country = {
-        code: string;
-        name: string;
-        states: { code: string; name: string; cities: string[] }[];
-    };
+    const countries = locationData.countries;
 
-    const countries = t('options.countries', { returnObjects: true } as any) as unknown as Country[];
 
-    // Local state for country, state, and city selections
-    const [selectedCountry, setSelectedCountry] = useState<string | null>(null);
-    const [selectedState, setSelectedState] = useState<string | null>(null);
-    const [states, setStates] = useState<{ code: string; name: string; cities: string[] }[]>([]);
-    const [cities, setCities] = useState<string[]>([]);
+    useEffect(() => {
+        if (formValues.country && locationData.selectedCountry) {
+            // Country already synced
+        }
+    }, [formValues, locationData]);
 
-    // Handle country change
     const onCountryChange = (countryCode: string) => {
-        setSelectedCountry(countryCode);
-        setSelectedState(null);
-        const countryObj = countries.find(c => c.code === countryCode);
-        setStates(countryObj?.states || []);
-        setCities([]);
+        locationData.handleCountryChange(countryCode);
         form.setValue(FORM_FIELDS.COUNTRY, countryCode);
         form.setValue(FORM_FIELDS.STATE, '');
         form.setValue(FORM_FIELDS.CITY, '');
     };
 
-    // Handle state change
     const onStateChange = (stateCode: string) => {
-        setSelectedState(stateCode);
-        const stateObj = states.find(s => s.code === stateCode);
-        setCities(stateObj?.cities || []);
+        locationData.handleStateChange(stateCode);
         form.setValue(FORM_FIELDS.STATE, stateCode);
         form.setValue(FORM_FIELDS.CITY, '');
+    };
+
+    const onCityChange = (cityName: string) => {
+        form.setValue(FORM_FIELDS.CITY, cityName);
     };
 
     return (
@@ -141,7 +139,7 @@ export default function PersonalInfoStep({ form }: PersonalInfoStepProps) {
                                 render={({ field }: { field: ControllerRenderProps<Step1Data> }) => (
                                     <FormItem>
                                         <FormLabel>{t('form.gender')}</FormLabel>
-                                        <Select onValueChange={field.onChange} value={field.value}>
+                                        <Select onValueChange={field.onChange} value={field.value || ''}>
                                             <FormControl>
                                                 <SelectTrigger>
                                                     <SelectValue placeholder={t('placeholder.selectGender')} />
@@ -168,11 +166,7 @@ export default function PersonalInfoStep({ form }: PersonalInfoStepProps) {
                                     <FormItem>
                                         <FormLabel>{t('form.date_of_birth')}</FormLabel>
                                         <FormControl>
-                                            <Input
-                                                type="date"
-                                                {...field}
-                                                max={new Date().toISOString().split('T')[0]}
-                                            />
+                                            <Input type="date" {...field} max={new Date().toISOString().split('T')[0]} />
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>
@@ -201,7 +195,7 @@ export default function PersonalInfoStep({ form }: PersonalInfoStepProps) {
                                 render={({ field }: { field: ControllerRenderProps<Step1Data> }) => (
                                     <FormItem>
                                         <FormLabel>{t('form.country')}</FormLabel>
-                                        <Select onValueChange={onCountryChange} value={selectedCountry || ''}>
+                                        <Select onValueChange={onCountryChange} value={field.value || ''}>
                                             <FormControl>
                                                 <SelectTrigger>
                                                     <SelectValue placeholder={t('placeholder.selectCountry')} />
@@ -229,14 +223,14 @@ export default function PersonalInfoStep({ form }: PersonalInfoStepProps) {
                                         <FormLabel>{t('form.state')}</FormLabel>
                                         <Select
                                             onValueChange={onStateChange}
-                                            value={selectedState || ''}
-                                            disabled={!selectedCountry}
+                                            value={field.value || ''}
+                                            disabled={!locationData.selectedCountry}
                                         >
                                             <FormControl>
                                                 <SelectTrigger>
                                                     <SelectValue
                                                         placeholder={
-                                                            selectedCountry
+                                                            locationData.selectedCountry
                                                                 ? t('form.select_state')
                                                                 : t('form.select_country_first')
                                                         }
@@ -244,7 +238,7 @@ export default function PersonalInfoStep({ form }: PersonalInfoStepProps) {
                                                 </SelectTrigger>
                                             </FormControl>
                                             <SelectContent>
-                                                {states.map(state => (
+                                                {locationData.availableStates.map(state => (
                                                     <SelectItem key={state.code} value={state.code}>
                                                         {state.name}
                                                     </SelectItem>
@@ -264,15 +258,15 @@ export default function PersonalInfoStep({ form }: PersonalInfoStepProps) {
                                     <FormItem>
                                         <FormLabel>{t('form.city')}</FormLabel>
                                         <Select
-                                            onValueChange={field.onChange}
+                                            onValueChange={onCityChange}
                                             value={field.value || ''}
-                                            disabled={!selectedState}
+                                            disabled={!locationData.selectedState}
                                         >
                                             <FormControl>
                                                 <SelectTrigger>
                                                     <SelectValue
                                                         placeholder={
-                                                            selectedState
+                                                            locationData.selectedState
                                                                 ? t('form.select_city')
                                                                 : t('form.select_state_first')
                                                         }
@@ -280,7 +274,7 @@ export default function PersonalInfoStep({ form }: PersonalInfoStepProps) {
                                                 </SelectTrigger>
                                             </FormControl>
                                             <SelectContent>
-                                                {cities.map(city => (
+                                                {locationData.availableCities.map(city => (
                                                     <SelectItem key={city} value={city}>
                                                         {city}
                                                     </SelectItem>
