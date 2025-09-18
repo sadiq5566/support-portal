@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'motion/react';
 import { AlertTriangle, RefreshCw, Home, Wifi, Database, Server } from 'lucide-react';
 import { Button } from '../components/ui/button';
@@ -23,6 +23,7 @@ interface ErrorConfig {
 
 export default function ErrorPage({ error, errorType = ERROR_TYPES.GENERIC }: ErrorPageProps) {
   const { t } = useI18n();
+  const navigate = useNavigate();
 
   const errorConfigs: Record<ErrorType, ErrorConfig> = {
     [ERROR_TYPES.STORAGE]: {
@@ -95,8 +96,13 @@ export default function ErrorPage({ error, errorType = ERROR_TYPES.GENERIC }: Er
   const config = errorConfigs[errorType];
   const IconComponent = config.icon;
 
-  const handleRefresh = () => window.location.reload();
-  const handleRetry = () => (window.history.length > 1 ? window.history.back() : (window.location.href = '/'));
+  const handleRefresh = () => {
+    window.location.reload();
+  };
+
+  const handleGoHome = () => {
+    window.location.href = '/';
+  };
 
   return (
     <main className="flex-1 flex items-center justify-center px-4 py-16">
@@ -133,15 +139,9 @@ export default function ErrorPage({ error, errorType = ERROR_TYPES.GENERIC }: Er
             {t("refresh_page")}
           </Button>
 
-          <Button onClick={handleRetry} variant="outline" size="lg">
-            {t("try_again")}
-          </Button>
-
-          <Button asChild variant="ghost" size="lg">
-            <Link to="/">
-              <Home className="mr-2 h-4 w-4" />
-              {t("go_home")}
-            </Link>
+          <Button onClick={handleGoHome} variant="ghost" size="lg">
+            <Home className="mr-2 h-4 w-4" />
+            {t("go_home")}
           </Button>
         </motion.div>
       </div>

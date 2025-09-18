@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Sparkles, Loader2, Check, X, RotateCcw } from 'lucide-react';
+import { Sparkles, Loader2, Check, X, RotateCcw, Edit2, Save } from 'lucide-react';
 import { Button } from '../../ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '../../ui/dialog';
 import { Textarea } from '../../ui/textarea';
@@ -14,15 +14,16 @@ interface AIAssistantProps {
   fieldLabel: string;
   currentValue: any;
   onAccept: (suggestion: string) => void;
+  onCurrentValueChange?: (newValue: string) => void; // New prop for updating current value
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
 }
-
 
 export default function AIAssistant({
   fieldLabel,
   currentValue,
   onAccept,
+  onCurrentValueChange,
   isOpen,
   onOpenChange,
 }: AIAssistantProps) {
@@ -31,15 +32,21 @@ export default function AIAssistant({
   const [suggestion, setSuggestion] = useState('');
   const [editedSuggestion, setEditedSuggestion] = useState('');
   const [isEditing, setIsEditing] = useState(false);
-  const handleGenerate = async () => {
+
+  // New states for editing current value
+  const [isEditingCurrentValue, setIsEditingCurrentValue] = useState(false);
+  const [editedCurrentValue, setEditedCurrentValue] = useState(currentValue || '');
+  const [tempEditValue, setTempEditValue] = useState(''); // Temporary value for editing
+
+  const handleGenerate = async (valueToGenerate?: string) => {
     setIsGenerating(true);
     setSuggestion('');
     setEditedSuggestion('');
     setIsEditing(false);
 
     try {
-      const result = await getOpenApiMessage(currentValue)
-      // setSuggestion(fieldName, currentValue);
+      const inputValue = valueToGenerate || currentValue;
+      const result = await getOpenApiMessage(inputValue);
       setSuggestion(result);
       setEditedSuggestion(result);
     } catch (error) {
@@ -66,14 +73,46 @@ export default function AIAssistant({
     setIsEditing(true);
   };
 
+  // New handlers for editing current value
+  const handleEditCurrentValue = () => {
+    setIsEditingCurrentValue(true);
+    setEditedCurrentValue(currentValue || '');
+  };
+
+  const handleSaveCurrentValue = async () => {
+    if (onCurrentValueChange) {
+      onCurrentValueChange(editedCurrentValue);
+    }
+    setIsEditingCurrentValue(false);
+
+    // Generate new AI suggestion based on edited current value
+    if (editedCurrentValue.trim()) {
+      await handleGenerate(editedCurrentValue);
+    }
+
+    toast.success(t('ai.current_value_updated'));
+  };
+
+  const handleCancelEditCurrentValue = () => {
+    setIsEditingCurrentValue(false);
+    setEditedCurrentValue(currentValue || '');
+  };
+
   React.useEffect(() => {
     if (isOpen) {
       setSuggestion('');
       setEditedSuggestion('');
       setIsEditing(false);
+      setIsEditingCurrentValue(false);
+      setTempEditValue('');
       handleGenerate();
     }
   }, [isOpen, fieldLabel]);
+
+  // Update editedCurrentValue when currentValue changes from parent
+  React.useEffect(() => {
+    setEditedCurrentValue(currentValue || '');
+  }, [currentValue]);
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
@@ -89,9 +128,53 @@ export default function AIAssistant({
           <div>
             <h3 className="font-medium mb-2">{fieldLabel}</h3>
             {currentValue && (
-              <div className="p-3 bg-muted rounded-lg">
-                <p className="text-sm text-muted-foreground mb-1">{t('ai.current_value')}</p>
-                <p className="text-sm">{currentValue}</p>
+              <div className="p-3 bg-muted rounded-lg relative group">
+                <div className="flex items-start justify-between">
+                  <div className="flex-1">
+                    <p className="text-sm text-muted-foreground mb-1">{t('ai.current_value')}</p>
+                    {isEditingCurrentValue ? (
+                      <div className="space-y-2">
+                        <Textarea
+                          value={editedCurrentValue}
+                          onChange={(e) => setEditedCurrentValue(e.target.value)}
+                          className="min-h-[80px]"
+                          placeholder={t('ai.edit_current_value_placeholder')}
+                        />
+                        <div className="flex gap-2">
+                          <Button
+                            size="sm"
+                            onClick={handleSaveCurrentValue}
+                            disabled={isGenerating}
+                          >
+                            <Save className="h-3 w-3 mr-1" />
+                            {t('ai.save')}
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={handleCancelEditCurrentValue}
+                          >
+                            {t('ai.cancel')}
+                          </Button>
+                        </div>
+                      </div>
+                    ) : (
+                      <p className="text-sm">{currentValue}</p>
+                    )}
+                  </div>
+
+                  {!isEditingCurrentValue && (
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      onClick={handleEditCurrentValue}
+                      className="opacity-0 group-hover:opacity-100 transition-opacity ml-2 h-8 w-8 p-0"
+                      title={t('ai.edit_current_value')}
+                    >
+                      <Edit2 className="h-3 w-3" />
+                    </Button>
+                  )}
+                </div>
               </div>
             )}
           </div>
@@ -154,7 +237,7 @@ export default function AIAssistant({
                       </Button>
                     )}
 
-                    <Button variant="outline" onClick={handleGenerate} disabled={isGenerating}>
+                    <Button variant="outline" onClick={() => handleGenerate()} disabled={isGenerating}>
                       <RotateCcw className="mr-2 h-4 w-4" />
                       {t('ai.retry')}
                     </Button>

@@ -147,6 +147,25 @@ export default function ApplicationWizard() {
     setCurrentFieldValue(suggestion);
   };
 
+  const handleCurrentValueChange = (newValue: string) => {
+    switch (currentStep) {
+      case WIZARD_STEPS.PERSONAL_INFO:
+        step1Form.setValue(aiAssistant.fieldName as keyof Step1Data, newValue);
+        break;
+      case WIZARD_STEPS.HOUSEHOLD_INFO:
+        step2Form.setValue(aiAssistant.fieldName as keyof Step2Data, newValue);
+        break;
+      case WIZARD_STEPS.SITUATION:
+        step3Form.setValue(aiAssistant.fieldName as keyof Step3Data, newValue);
+        break;
+    }
+
+    const currentForm = getCurrentForm(currentStep);
+    setFormData(prev => ({
+      ...prev,
+      ...currentForm.getValues()
+    }));
+  };
 
 
   if (error) throw error;
@@ -181,6 +200,7 @@ export default function ApplicationWizard() {
         fieldLabel={aiAssistant.fieldLabel}
         currentValue={getCurrentFieldValue()}
         onAccept={handleAIAccept}
+        onCurrentValueChange={handleCurrentValueChange}
         isOpen={aiAssistant.isOpen}
         onOpenChange={(open) => setAiAssistant(prev => ({ ...prev, isOpen: open }))}
       />

@@ -183,6 +183,11 @@ suggestion: {
       retry: 'Try Again',
       edit_placeholder: 'Edit the suggestion...',
       error: 'Failed to generate suggestions. Please try again.',
+      "cancel": "Cancel",
+      "save": "Save",
+      "edit_current_value_placeholder": "Edit the current value...",
+      "current_value_updated": "Current value updated successfully",
+      "edit_current_value": "Edit current value"
     },
 
     // Buttons
@@ -641,6 +646,11 @@ ai: {
   retry: 'حاول مرة أخرى',
   edit_placeholder: 'عدل الاقتراح...',
   error: 'فشل في توليد الاقتراحات. يرجى المحاولة مرة أخرى.',
+   "cancel": "إلغاء",
+      "save": "حفظ",
+      "edit_current_value_placeholder": "تعديل القيمة الحالية...",
+      "current_value_updated": "تم تحديث القيمة الحالية بنجاح",
+      "edit_current_value": "تعديل القيمة الحالية"
 },
 
 // Buttons

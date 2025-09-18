@@ -23,7 +23,7 @@ export const getStep1Schema = (t: TFunction) => z.object({
   phone: z.string()
     .min(10, t('validation.phoneMin'))
     .regex(/^\+?[0-9\s\-\(\)]{10,20}$/, t('validation.phoneInvalidChars')),
-  email: z.string().email(t('validation.phoneInvalidChars')),
+  email: z.string().email(t('validation.emailInvalid')),
 });
 
 export const getStep2Schema = (t: TFunction) => z.object({

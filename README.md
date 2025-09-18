@@ -18,10 +18,6 @@ The Government Social Support Portal was created to solve these problems by prov
 
 **A modern, accessible, and AI-powered government social support portal built with React + TypeScript**
 
-> **Last updated:** September 16, 2025
-
----
-
 ## Table of contents
 
 1. [Project overview](#project-overview)
@@ -45,7 +41,7 @@ Goals:
 
 * Mobile-first and responsive layout with RTL support for Arabic
 * Minimal friction during application using autosave and clear validations
-* Privacy-aware AI assistance via OpenAI (or proxied backend)
+* Privacy-aware AI assistance via OpenAI 
 
 ---
 
@@ -119,7 +115,7 @@ SOCIAL SUPPORT PORTAL
 
 **Notes:**
 
-* `services/openai.ts` contains the client-side helper for calling your backend or the OpenAI API. For production, do **not** expose a raw OpenAI key to the browser; proxy requests through a backend.
+* `services/openai.ts` contains the client-side helper for calling the OpenAI API. For production, do **not** expose a raw OpenAI key to the browser; proxy requests through a backend.
 
 ---
 
@@ -208,7 +204,7 @@ This is the step-by-step flow the user sees in the portal.
 
    1. Enter full name, ID, contact details, and address.
    2. Inline validation shows errors in real-time.
-   3. On *Next*, data is validated and saved to Redux + LocalStorage.
+   3. On *Next*, data is validated and saved to  LocalStorage.
 3. **Step 2 — Financial Details**
 
    1. Enter income, expenses, and supporting document references.
@@ -230,15 +226,20 @@ This is the step-by-step flow the user sees in the portal.
 
 1. **How it works**
 
-   * The UI sends a context-rich prompt to your configured backend service, which in turn calls OpenAI (recommended). The assistant returns suggested text that the user may accept or edit.
+   * The frontend form sends the user’s input directly to the OpenAI API.
+   * OpenAI returns generated text, which is shown in the UI.
+   * The user can accept, edit, or discard the suggested text.
+
 2. **Privacy & retention**
 
-   * Keep prompts minimal and avoid sending unnecessary PII.
-   * Prefer a server-side proxy so keys are never exposed in the browser.
-   * If storing AI outputs, make retention policies explicit and minimal.
+   * Keep prompts as minimal as possible — avoid sending any sensitive or personal information (PII) from the frontend.
+   * Since API keys are stored on the frontend, they can be exposed — use client-side protections like environment variables and domain restrictions to reduce risk.
+   * If you choose to store AI outputs locally (e.g. browser storage), make it optional and clearly inform users about how long the data is kept.
 3. **Error handling**
 
-   * The UI gracefully degrades if the AI service is unavailable: it shows helpful guidance and allows manual input.
+   * If the OpenAI API is unavailable or returns an error, the UI should:
+            * Show a friendly error message or fallback guidance
+            * Allow the user to continue writing manually without blocking the form.
 
 ---
 
@@ -267,9 +268,7 @@ This is the step-by-step flow the user sees in the portal.
 
 ```bash
 npm run test
-# watch mode
 npm run test:watch
-# coverage (if configured)
 npm run test:coverage
 ```
 

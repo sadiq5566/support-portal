@@ -1,4 +1,4 @@
-import { WIZARD_STATUS } from '../../../constants/constant';
+import { WIZARD_STATUS, WIZARD_STEPS } from '../../../constants/constant';
 import { StepIndicators } from './StepIndicators'
 import { ProgressBar } from './ProgressBar'
 import { User, Home, FileText } from 'lucide-react';
@@ -16,19 +16,19 @@ const StepProgress = ({ currentStep, progress, onStepClick }: StepProgressProps)
     const { t } = useI18n();
     const formSteps = [
         {
-            number: 1,
+            number: WIZARD_STEPS.PERSONAL_INFO,
             title: t('wizard.step1.title'),
             subtitle: t('wizard.step1.subtitle'),
             icon: User,
         },
         {
-            number: 2,
+            number: WIZARD_STEPS.HOUSEHOLD_INFO,
             title: t('wizard.step2.title'),
             subtitle: t('wizard.step2.subtitle'),
             icon: Home,
         },
         {
-            number: 3,
+            number: WIZARD_STEPS.SITUATION,
             title: t('wizard.step3.title'),
             subtitle: t('wizard.step3.subtitle'),
             icon: FileText,
