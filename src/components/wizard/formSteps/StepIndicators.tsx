@@ -29,7 +29,7 @@ export const StepIndicators = ({
                     <StepItem
                         key={step.number}
                         step={step}
-                        status={status} // now typed from WIZARD_STATUS
+                        status={status}
                         canNavigate={canNavigate}
                         onClick={onStepClick}
                     />

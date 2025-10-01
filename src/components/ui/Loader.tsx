@@ -9,7 +9,7 @@ interface LoaderProps {
 }
 
 const Loader: React.FC<LoaderProps> = ({
-    messageKey = 'Loading...', // default key
+    messageKey = 'Loading...',
     size = 8,
     color = 'text-blue-500',
 }) => {

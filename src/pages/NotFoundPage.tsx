@@ -1,8 +1,7 @@
 import { Link } from 'react-router-dom';
 import { motion } from 'motion/react';
-import { Home, ArrowLeft, Search } from 'lucide-react';
+import { Home, ArrowLeft } from 'lucide-react';
 import { Button } from '../components/ui/button';
-import { Input } from '../components/ui/input';
 import { useI18n } from '../hooks/useI18n';
 
 export default function NotFoundPage() {
@@ -80,21 +79,6 @@ export default function NotFoundPage() {
           </p>
         </motion.div>
 
-        {/* Search Box */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.5 }}
-          className="mb-8"
-        >
-          <div className="relative max-w-md mx-auto">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-            <Input
-              placeholder={t('error.404.searchPlaceholder')}
-              className="pl-10"
-            />
-          </div>
-        </motion.div>
 
         {/* Action Buttons */}
         <motion.div

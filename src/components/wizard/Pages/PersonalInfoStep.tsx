@@ -1,4 +1,3 @@
-import { useEffect } from 'react';
 import { motion } from 'motion/react';
 import { ControllerRenderProps, UseFormReturn } from 'react-hook-form';
 import { Card, CardContent, CardHeader, CardTitle } from '../../ui/card';
@@ -22,7 +21,6 @@ export default function PersonalInfoStep({ form }: PersonalInfoStepProps) {
         form.getValues().city
     );
 
-    const formValues = form.getValues();
 
     const genderOptions = [
         { value: 'male', label: t('options.gender.male') },
@@ -34,11 +32,11 @@ export default function PersonalInfoStep({ form }: PersonalInfoStepProps) {
     const countries = locationData.countries;
 
 
-    useEffect(() => {
-        if (formValues.country && locationData.selectedCountry) {
-            // Country already synced
-        }
-    }, [formValues, locationData]);
+    // useEffect(() => {
+    //     if (formValues.country && locationData.selectedCountry) {
+    //         // Country already synced
+    //     }
+    // }, [formValues, locationData]);
 
     const onCountryChange = (countryCode: string) => {
         locationData.handleCountryChange(countryCode);
@@ -71,7 +69,7 @@ export default function PersonalInfoStep({ form }: PersonalInfoStepProps) {
                 </CardHeader>
                 <CardContent>
                     <Form {...form}>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                             {/* First Name */}
                             <FormField
                                 control={form.control}

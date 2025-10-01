@@ -1,5 +1,4 @@
 import React from 'react';
-import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'motion/react';
 import { AlertTriangle, RefreshCw, Home, Wifi, Database, Server } from 'lucide-react';
 import { Button } from '../components/ui/button';
@@ -23,7 +22,6 @@ interface ErrorConfig {
 
 export default function ErrorPage({ error, errorType = ERROR_TYPES.GENERIC }: ErrorPageProps) {
   const { t } = useI18n();
-  const navigate = useNavigate();
 
   const errorConfigs: Record<ErrorType, ErrorConfig> = {
     [ERROR_TYPES.STORAGE]: {

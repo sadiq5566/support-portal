@@ -207,7 +207,7 @@ This is the step-by-step flow the user sees in the portal.
    3. On *Next*, data is validated and saved to  LocalStorage.
 3. **Step 2 — Financial Details**
 
-   1. Enter income, expenses, and supporting document references.
+   1. Enter income, expenses, and family related info.
    2. Calculations (e.g., monthly net) are computed client-side for preview.
    3. On *Next*, validated data is persisted.
 4. **Step 3 — Situation Description**

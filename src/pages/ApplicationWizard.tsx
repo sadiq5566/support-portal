@@ -3,7 +3,6 @@ import { AnimatePresence } from 'motion/react';
 import { toast } from 'sonner';
 import { useI18n } from '../hooks/useI18n';
 import { useLocalStorage } from '../hooks/useLocalStorage';
-import { useLocationData } from '../hooks/useLocationData';
 import { useWizardForm } from '../hooks/useWizardForm';
 import WizardProgress from '../components/wizard/formSteps/WizardProgress';
 import PersonalInfoStep from '../components/wizard/Pages/PersonalInfoStep';
@@ -13,7 +12,6 @@ import WizardNavigation from '../components/wizard/components/WizardNavigation';
 import { Step1Data, Step2Data, Step3Data } from '../lib/zod';
 import {
   AI_ASSISTANT_DEFAULTS,
-  FORM_FIELDS,
   LOCAL_STEP_KEY,
   MOCK_API_CONFIG,
   STORAGE_KEY,
@@ -60,7 +58,7 @@ export default function ApplicationWizard() {
       case WIZARD_STEPS.HOUSEHOLD_INFO:
         return step2Form.getValues()[aiAssistant.fieldName as keyof Step2Data];
       case WIZARD_STEPS.SITUATION:
-        return step3Form.getValues()[aiAssistant.fieldName as keyof Step3Data] || aiAssistant.customQuestion;
+        return step3Form.getValues()[aiAssistant?.fieldName as keyof Step3Data]?.trim() || aiAssistant.customQuestion;
       default:
         return '';
     }
